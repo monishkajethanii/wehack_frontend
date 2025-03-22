@@ -1,103 +1,183 @@
-import Image from "next/image";
+"use client";
+import React, { useState } from "react";
+import { Mail, Lock, LogIn, AlertCircle } from "lucide-react";
 
-export default function Home() {
+const StudentLoginPage = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    pin: "",
+  });
+
+  const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
+
+  const validationPatterns = {
+    email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    pin: /^[0-9]{4}$/,
+  };
+
+  const errorMessages = {
+    email: "Please enter a valid email address",
+    pin: "Please enter a valid 4-digit PIN",
+  };
+
+  const validateField = (field, value) => {
+    const pattern = validationPatterns[field];
+    return pattern.test(value) ? "" : errorMessages[field];
+  };
+
+  const updateFormData = (field, value) => {
+    setFormData({
+      ...formData,
+      [field]: value,
+    });
+
+    setTouched({
+      ...touched,
+      [field]: true,
+    });
+
+    const errorMessage = validateField(field, value);
+    setErrors({
+      ...errors,
+      [field]: errorMessage,
+    });
+  };
+
+  const checkFormValidity = () => {
+    let isValid = true;
+    let newErrors = { ...errors };
+
+    if (!validationPatterns.email.test(formData.email)) {
+      newErrors.email = errorMessages.email;
+      isValid = false;
+    }
+
+    if (!validationPatterns.pin.test(formData.pin)) {
+      newErrors.pin = errorMessages.pin;
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (checkFormValidity()) {
+      // Handle login logic here
+      console.log("Login attempted with:", formData);
+      // You would typically send this data to your server for authentication
+    } else {
+      // Mark all fields as touched to show validation errors
+      setTouched({
+        email: true,
+        pin: true,
+      });
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="flex min-h-screen w-full items-center justify-center bg-black py-12 px-4">
+      <div className="w-full max-w-md rounded-xl bg-gray-900 p-6 shadow-lg border border-gray-700">
+        <div className="mb-8 flex items-center justify-center">
+          <div className="relative h-32 w-32">
+            <div className="absolute left-0 top-0 h-32 w-32 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="flex h-full w-full items-center justify-center text-6xl font-bold text-white rounded-full overflow-hidden">
+                <img
+                  src="/avatar.png"
+                  width={125}
+                  height={100}
+                  className="rounded-full"
+                />
+              </div>
+            </div>
+          </div>
+        <div className="mt-4 ml-4 text-center">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+              Skill-Hire
+            </h2>
+            <p className="text-gray-400 mt-1 italic">
+              Connect. Learn. Succeed.
+            </p>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-white">
+              Email Address
+            </label>
+            <div
+              className={`flex items-center rounded-md border ${
+                errors.email && touched.email ? "border-red-500" : "border-gray-600"
+              } px-3 py-2 bg-gray-800`}
+            >
+              <Mail className="mr-2 h-4 w-4 text-gray-400" />
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => updateFormData("email", e.target.value)}
+                className="w-full border-0 bg-transparent p-0 focus:outline-none text-white"
+                placeholder="john.doe@example.com"
+                required
+              />
+            </div>
+            {errors.email && touched.email && (
+              <p className="text-red-500 text-xs mt-1 flex items-center">
+                <AlertCircle className="h-3 w-3 mr-1" /> {errors.email}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-white">
+              4-Digit PIN
+            </label>
+            <div
+              className={`flex items-center rounded-md border ${
+                errors.pin && touched.pin ? "border-red-500" : "border-gray-600"
+              } px-3 py-2 bg-gray-800`}
+            >
+              <Lock className="mr-2 h-4 w-4 text-gray-400" />
+              <input
+                type="password"
+                value={formData.pin}
+                onChange={(e) => updateFormData("pin", e.target.value)}
+                className="w-full border-0 bg-transparent p-0 focus:outline-none text-white"
+                placeholder="Enter your 4-digit PIN"
+                required
+                maxLength={4}
+              />
+            </div>
+            {errors.pin && touched.pin && (
+              <p className="text-red-500 text-xs mt-1 flex items-center">
+                <AlertCircle className="h-3 w-3 mr-1" /> {errors.pin}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            className="flex w-full justify-center items-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-500 transition"
+          >
+            <LogIn className="mr-2 h-4 w-4" />
+            Log in
+          </button>
+
+          <div className="text-center mt-4">
+            <span className="text-gray-400 text-sm">
+              Don't have an account?{" "}
+              <a href="/signup" className="text-blue-400 hover:text-blue-300">
+                Sign up
+              </a>
+            </span>
+          </div>
+        </form>
+      </div>
     </div>
   );
-}
+};
+
+export default StudentLoginPage;
