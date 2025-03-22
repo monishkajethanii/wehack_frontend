@@ -24,6 +24,10 @@ const RecruiterDashboard = () => {
   const [notificationCount, setNotificationCount] = useState(2);
   const [showAddInternshipForm, setShowAddInternshipForm] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [domain, setDomain] = useState("Technology");
+  const [availableQuestions, setAvailableQuestions] = useState([]);
+  const [selectedQuestions, setSelectedQuestions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -33,43 +37,97 @@ const RecruiterDashboard = () => {
     location: "online",
     status: "1",
     assessment: "mcq",
-    selectedQuestionId: null
+    selectedQuestionId: null,
   });
   const [challengeQuestions, setChallengeQuestions] = useState([]);
-  
-  // Sample challenge questions (in a real app, this would be fetched from challenges.json)
-  const mockChallengeQuestions = [
-    { id: 1, title: "Create a function to reverse a string without using built-in methods" },
-    { id: 2, title: "Implement a binary search algorithm" },
-    { id: 3, title: "Build a function to find the longest palindrome in a string" },
-    { id: 4, title: "Create a function to detect if a string has all unique characters" },
-    { id: 5, title: "Implement a queue using two stacks" },
-    { id: 6, title: "Create a function to check if a binary tree is balanced" },
-    { id: 7, title: "Implement a function to find the first non-repeating character in a string" },
-    { id: 8, title: "Create an algorithm to determine if a string is a rotation of another string" },
-    { id: 9, title: "Build a function to merge two sorted arrays" }
-  ];
 
-  // Function to get random challenge questions
-  const getRandomChallengeQuestions = () => {
-    // Shuffle array and take the first 3
-    const shuffled = [...mockChallengeQuestions].sort(() => 0.5 - Math.random());
+  useEffect(() => {
+    fetch("/mcq.json")
+      .then((response) => response.json())
+      .then((mcqData) => {
+        if (mcqData && mcqData[domain]) {
+          setAvailableQuestions(mcqData[domain]);
+        }
+      })
+      .catch((error) => console.error("Error loading MCQ data:", error));
+  }, [domain]);
+
+  useEffect(() => {
+    fetch("/questions.json")
+      .then((response) => response.json())
+      .then((challengesData) => {
+        if (challengesData && Array.isArray(challengeQuestions)) {
+            console.log(challengesData)
+            setChallengeQuestions(getRandomChallengeQuestions(challengesData.questions));
+        }
+      })
+      .catch((error) => console.error("Error loading MCQ data:", error));
+  }, [domain]);
+
+  const handleDomainChange = (e) => {
+    setDomain(e.target.value);
+  };
+
+  const toggleQuestionSelection = (question) => {
+    const isSelected = selectedQuestions.some(
+      (q) => q.question === question.question
+    );
+
+    if (isSelected) {
+      setSelectedQuestions(
+        selectedQuestions.filter((q) => q.question !== question.question)
+      );
+    } else {
+      if (selectedQuestions.length < 10) {
+        setSelectedQuestions([...selectedQuestions, question]);
+      }
+    }
+  };
+
+  const refreshChallengeQuestions = () =>{
+    fetch("/questions.json")
+    .then((response) => response.json())
+    .then((challengesData) => {
+      if (challengesData && Array.isArray(challengeQuestions)) {
+          console.log(challengesData)
+          setChallengeQuestions(getRandomChallengeQuestions(challengesData.questions));
+      }
+    })
+    .catch((error) => console.error("Error loading MCQ data:", error));
+  }
+
+  const handleSaveSelection = () => {
+    console.log("Selected domain:", domain);
+    console.log("Selected questions:", selectedQuestions);
+    // Here you would typically save to state or database
+    alert(`Saved ${selectedQuestions.length} questions from ${domain} domain`);
+  };
+
+  const getRandomChallengeQuestions = (questionsArray) => {
+    const shuffled = [...questionsArray].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, 3);
   };
 
-  // Set initial challenge questions on component mount
-  useEffect(() => {
-    setChallengeQuestions(getRandomChallengeQuestions());
-  }, []);
+//   const refreshChallengeQuestions = () => {
+//     try {
+//       if (challengesData && Array.isArray(challengesData)) {
+//         setChallengeQuestions(getRandomChallengeQuestions(challengesData));
+//       } else {
+//         setChallengeQuestions(
+//           getRandomChallengeQuestions(challengesData)
+//         );
+//       }
+//     } catch (error) {
+//       setChallengeQuestions(
+//         getRandomChallengeQuestions(challengesData)
+//       );
+//     }
 
-  // Function to refresh challenge questions
-  const refreshChallengeQuestions = () => {
-    setChallengeQuestions(getRandomChallengeQuestions());
-    setFormData({
-      ...formData,
-      selectedQuestionId: null
-    });
-  };
+//     setFormData({
+//       ...formData,
+//       selectedQuestionId: null,
+//     });
+//   };
 
   const recruiterData = {
     name: "Jane Smith",
@@ -91,7 +149,7 @@ const RecruiterDashboard = () => {
       status: "1",
       applicants: 12,
       postedDate: "March 15, 2025",
-      assessment: "mcq"
+      assessment: "mcq",
     },
     {
       id: 2,
@@ -105,7 +163,7 @@ const RecruiterDashboard = () => {
       status: "1",
       applicants: 8,
       postedDate: "March 10, 2025",
-      assessment: "code challenge"
+      assessment: "code challenge",
     },
     {
       id: 3,
@@ -119,7 +177,7 @@ const RecruiterDashboard = () => {
       status: "0",
       applicants: 0,
       postedDate: "March 18, 2025",
-      assessment: "mcq"
+      assessment: "mcq",
     },
   ];
 
@@ -135,19 +193,14 @@ const RecruiterDashboard = () => {
     setFormData({
       ...formData,
       assessment: e.target.value,
-      selectedQuestionId: null // Reset selected question when assessment type changes
+      selectedQuestionId: null,
     });
-    
-    // If changing to code challenge, ensure we have questions loaded
-    if (e.target.value === "code challenge" && challengeQuestions.length === 0) {
-      setChallengeQuestions(getRandomChallengeQuestions());
-    }
   };
 
   const handleQuestionSelect = (questionId) => {
     setFormData({
       ...formData,
-      selectedQuestionId: questionId
+      selectedQuestionId: questionId,
     });
   };
 
@@ -163,7 +216,7 @@ const RecruiterDashboard = () => {
       location: "online",
       status: "1",
       assessment: "mcq",
-      selectedQuestionId: null
+      selectedQuestionId: null,
     });
     setShowAddInternshipForm(false);
   };
@@ -171,6 +224,10 @@ const RecruiterDashboard = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
+  if (isLoading) {
+    return <div className="p-4 text-white">Loading MCQ data...</div>;
+  }
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-black text-white overflow-hidden">
@@ -194,14 +251,24 @@ const RecruiterDashboard = () => {
       </div>
 
       {/* Sidebar - for desktop always visible, for mobile conditionally visible */}
-      <div className={`${sidebarOpen ? 'fixed inset-0 z-50 md:relative md:translate-x-0' : 'fixed -translate-x-full md:relative md:translate-x-0'} 
+      <div
+        className={`${
+          sidebarOpen
+            ? "fixed inset-0 z-50 md:relative md:translate-x-0"
+            : "fixed -translate-x-full md:relative md:translate-x-0"
+        } 
                       transition-transform duration-300 ease-in-out
-                      w-3/4 sm:w-64 bg-gray-900 border-r border-gray-800 flex flex-col`}>
+                      w-3/4 sm:w-64 bg-gray-900 border-r border-gray-800 flex flex-col`}
+      >
         <div className="p-4 border-b border-gray-800 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
               <div className="text-white font-bold">
-                <img src="/manager.jpg" className="rounded-full" alt="Profile" />
+                <img
+                  src="/manager.jpg"
+                  className="rounded-full"
+                  alt="Profile"
+                />
               </div>
             </div>
             <div>
@@ -211,10 +278,7 @@ const RecruiterDashboard = () => {
               <p className="text-xs text-gray-400">Recruiter</p>
             </div>
           </div>
-          <button
-            onClick={toggleSidebar}
-            className="md:hidden text-gray-400"
-          >
+          <button onClick={toggleSidebar} className="md:hidden text-gray-400">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -267,7 +331,7 @@ const RecruiterDashboard = () => {
 
       {/* Overlay for mobile sidebar */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
           onClick={toggleSidebar}
         ></div>
@@ -349,7 +413,9 @@ const RecruiterDashboard = () => {
           {showAddInternshipForm && (
             <div className="bg-gray-800 rounded-lg p-4 md:p-6 border border-gray-700 mb-6">
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg md:text-xl font-bold">Create New Opportunity</h2>
+                <h2 className="text-lg md:text-xl font-bold">
+                  Create New Opportunity
+                </h2>
                 <button
                   onClick={() => setShowAddInternshipForm(false)}
                   className="text-gray-400 hover:text-gray-300"
@@ -469,7 +535,10 @@ const RecruiterDashboard = () => {
                           onChange={handleRadioChange}
                           className="h-4 w-4 text-blue-500 focus:ring-blue-500 bg-gray-700 border-gray-600"
                         />
-                        <label htmlFor="mcq" className="ml-2 text-sm text-gray-300">
+                        <label
+                          htmlFor="mcq"
+                          className="ml-2 text-sm text-gray-300"
+                        >
                           MCQ
                         </label>
                       </div>
@@ -483,19 +552,124 @@ const RecruiterDashboard = () => {
                           onChange={handleRadioChange}
                           className="h-4 w-4 text-blue-500 focus:ring-blue-500 bg-gray-700 border-gray-600"
                         />
-                        <label htmlFor="codeChallenge" className="ml-2 text-sm text-gray-300">
+                        <label
+                          htmlFor="codeChallenge"
+                          className="ml-2 text-sm text-gray-300"
+                        >
                           Code Challenge
+                        </label>
+                      </div>
+                      <div className="flex items-center">
+                        <input
+                          type="radio"
+                          id="designChallenge"
+                          name="assessment"
+                          value="design challenge"
+                          checked={formData.assessment === "design challenge"}
+                          onChange={handleRadioChange}
+                          className="h-4 w-4 text-blue-500 focus:ring-blue-500 bg-gray-700 border-gray-600"
+                        />
+                        <label
+                          htmlFor="codeChallenge"
+                          className="ml-2 text-sm text-gray-300"
+                        >
+                          Design Challenge
                         </label>
                       </div>
                     </div>
                   </div>
 
-                  {/* Challenge Questions Selection - Only visible when code challenge is selected */}
+                  {formData.assessment === "mcq" && (
+                    <div className="p-4 bg-gray-900 rounded-lg border border-gray-800">
+                      <h2 className="text-xl font-bold mb-4">MCQ Selection</h2>
+
+                      <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-400 mb-2">
+                          Select Domain
+                        </label>
+                        <select
+                          value={domain}
+                          onChange={handleDomainChange}
+                          className="w-full bg-gray-800 border-none rounded-md h-10 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="Technology">Technology</option>
+                          <option value="Arts">Arts</option>
+                          <option value="Commerce">Commerce</option>
+                          <option value="Science">Science</option>
+                        </select>
+                      </div>
+
+                      <div className="mb-4">
+                        <div className="flex justify-between items-center mb-2">
+                          <h3 className="text-sm font-medium text-gray-400">
+                            Select 10 Questions
+                          </h3>
+                          <span className="text-xs text-gray-400">
+                            {selectedQuestions.length}/10 selected
+                          </span>
+                        </div>
+
+                        <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
+                          {availableQuestions.length > 0 ? (
+                            availableQuestions.map((question, index) => (
+                              <div
+                                key={index}
+                                className={`p-3 rounded-md cursor-pointer transition ${
+                                  selectedQuestions.some(
+                                    (q) => q.question === question.question
+                                  )
+                                    ? "bg-blue-900 border border-blue-700"
+                                    : "bg-gray-800 border border-gray-700 hover:border-gray-600"
+                                }`}
+                                onClick={() =>
+                                  toggleQuestionSelection(question)
+                                }
+                              >
+                                <div className="flex justify-between">
+                                  <p className="text-sm">{question.question}</p>
+                                  <span
+                                    className={`text-xs px-2 py-0.5 rounded ${
+                                      question.difficulty === "Easy"
+                                        ? "bg-green-900 text-green-300"
+                                        : question.difficulty === "Medium"
+                                        ? "bg-yellow-900 text-yellow-300"
+                                        : "bg-red-900 text-red-300"
+                                    }`}
+                                  >
+                                    {question.difficulty}
+                                  </span>
+                                </div>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-center text-gray-400 py-4">
+                              No questions available for this domain
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={handleSaveSelection}
+                        disabled={selectedQuestions.length !== 10}
+                        className={`w-full py-2 rounded-md transition ${
+                          selectedQuestions.length === 10
+                            ? "bg-blue-600 hover:bg-blue-700 text-white"
+                            : "bg-gray-700 text-gray-400 cursor-not-allowed"
+                        }`}
+                      >
+                        Save Selection
+                      </button>
+                    </div>
+                  )}
+
                   {formData.assessment === "code challenge" && (
                     <div className="md:col-span-2 bg-gray-700 p-4 rounded-md">
                       <div className="flex justify-between items-center mb-3">
-                        <h3 className="text-sm font-medium text-gray-300">Select a Challenge Question</h3>
-                        <button 
+                        <h3 className="text-sm font-medium text-gray-300">
+                          Select a Challenge Question
+                        </h3>
+                        <button
                           type="button"
                           onClick={refreshChallengeQuestions}
                           className="flex items-center text-blue-400 text-sm hover:text-blue-300"
@@ -506,7 +680,7 @@ const RecruiterDashboard = () => {
                       </div>
                       <div className="space-y-3">
                         {challengeQuestions.map((question) => (
-                          <div 
+                          <div
                             key={question.id}
                             className={`p-3 rounded-md cursor-pointer border ${
                               formData.selectedQuestionId === question.id
@@ -516,22 +690,29 @@ const RecruiterDashboard = () => {
                             onClick={() => handleQuestionSelect(question.id)}
                           >
                             <div className="flex items-start">
-                              <div className={`h-4 w-4 rounded-full mt-0.5 mr-3 border ${
-                                formData.selectedQuestionId === question.id
-                                  ? "bg-blue-500 border-blue-500"
-                                  : "border-gray-500"
-                              }`}>
-                                {formData.selectedQuestionId === question.id && (
+                              <div
+                                className={`h-4 w-4 rounded-full mt-0.5 mr-3 border ${
+                                  formData.selectedQuestionId === question.id
+                                    ? "bg-blue-500 border-blue-500"
+                                    : "border-gray-500"
+                                }`}
+                              >
+                                {formData.selectedQuestionId ===
+                                  question.id && (
                                   <Check className="h-3 w-3 text-white" />
                                 )}
                               </div>
-                              <span className="text-sm text-gray-300">{question.title}</span>
+                              <span className="text-sm text-gray-300">
+                                {question.title}
+                              </span>
                             </div>
                           </div>
                         ))}
                       </div>
                       {!formData.selectedQuestionId && (
-                        <p className="mt-3 text-xs text-red-400">Please select a challenge question</p>
+                        <p className="mt-3 text-xs text-red-400">
+                          Please select a challenge question
+                        </p>
                       )}
                     </div>
                   )}
@@ -562,9 +743,13 @@ const RecruiterDashboard = () => {
                   </button>
                   <button
                     type="submit"
-                    disabled={formData.assessment === "code challenge" && !formData.selectedQuestionId}
+                    disabled={
+                      formData.assessment === "code challenge" &&
+                      !formData.selectedQuestionId
+                    }
                     className={`w-full sm:w-auto px-4 py-2 rounded-md text-white ${
-                      formData.assessment === "code challenge" && !formData.selectedQuestionId
+                      formData.assessment === "code challenge" &&
+                      !formData.selectedQuestionId
                         ? "bg-blue-600 opacity-50 cursor-not-allowed"
                         : "bg-blue-600 hover:bg-blue-700"
                     }`}
@@ -650,7 +835,6 @@ const RecruiterDashboard = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
-                             
                               <span className="text-xs text-gray-400">
                                 {internship.limit}
                               </span>
@@ -665,11 +849,13 @@ const RecruiterDashboard = () => {
                             {internship.location}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                            <span className={`px-2 py-1 rounded text-xs ${
-                              internship.assessment === "code challenge" 
-                                ? "bg-purple-900 text-purple-200" 
-                                : "bg-blue-900 text-blue-200"
-                            }`}>
+                            <span
+                              className={`px-2 py-1 rounded text-xs ${
+                                internship.assessment === "code challenge"
+                                  ? "bg-purple-900 text-purple-200"
+                                  : "bg-blue-900 text-blue-200"
+                              }`}
+                            >
                               {internship.assessment}
                             </span>
                           </td>
@@ -717,19 +903,26 @@ const RecruiterDashboard = () => {
               {/* Cards for mobile view */}
               <div className="md:hidden space-y-4">
                 {internships.map((internship) => (
-                  <div key={internship.id} className="bg-gray-800 rounded-lg border border-gray-700 p-4">
+                  <div
+                    key={internship.id}
+                    className="bg-gray-800 rounded-lg border border-gray-700 p-4"
+                  >
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h3 className="font-medium text-white">{internship.title}</h3>
+                        <h3 className="font-medium text-white">
+                          {internship.title}
+                        </h3>
                         <div className="flex items-center mt-1 space-x-3">
                           <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">
                             {internship.majorSkill}
                           </span>
-                          <span className={`px-2 py-1 rounded text-xs ${
-                            internship.assessment === "code challenge" 
-                              ? "bg-purple-900 text-purple-200" 
-                              : "bg-blue-900 text-blue-200"
-                          }`}>
+                          <span
+                            className={`px-2 py-1 rounded text-xs ${
+                              internship.assessment === "code challenge"
+                                ? "bg-purple-900 text-purple-200"
+                                : "bg-blue-900 text-blue-200"
+                            }`}
+                          >
                             {internship.assessment}
                           </span>
                           <span

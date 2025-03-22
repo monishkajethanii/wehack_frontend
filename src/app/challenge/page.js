@@ -123,7 +123,7 @@ const CodeEditorPage = () => {
           )}
           <button 
             onClick={handleRunCode}
-            className="px-2 py-1 rounded bg-green-600 hover:bg-green-500 text-sm flex items-center"
+            className="px-2 py-1 rounded bg-gradient-to-r from-blue-500 to-purple-600 text-sm flex items-center"
           >
             <Play className="h-4 w-4 mr-1" />
             <span className="hidden sm:inline">Run</span>
@@ -232,7 +232,7 @@ const CodeEditorPage = () => {
               <div className="bg-gray-800 border-t border-gray-700 p-3 flex justify-end">
                 <button 
                   onClick={handleRunCode}
-                  className="px-3 py-1.5 bg-green-600 hover:bg-green-500 rounded flex items-center"
+                  className="px-3 py-1.5 bg-gradient-to-r from-blue-500 to-purple-600 rounded flex items-center"
                 >
                   <Play className="h-4 w-4 mr-1" />
                   Run Code
@@ -352,7 +352,7 @@ const CodeEditorPage = () => {
             <div className="bg-gray-800 border-t border-gray-700 p-3 flex justify-end">
               <button 
                 onClick={handleRunCode}
-                className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded flex items-center"
+                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded flex items-center"
               >
                 <Play className="h-4 w-4 mr-2" />
                 Run Code

@@ -1,0 +1,890 @@
+{
+    "Technology": [
+      {
+        "question": "What does CPU stand for?",
+        "options": [
+          "Central Processing Unit",
+          "Computer Personal Unit",
+          "Central Process Utility",
+          "Core Processing Unit"
+        ],
+        "correct_answer": "Central Processing Unit",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which programming language is known for its use in Android app development?",
+        "options": [
+          "Swift",
+          "Kotlin",
+          "C#",
+          "Ruby"
+        ],
+        "correct_answer": "Kotlin",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What technology is used to record cryptocurrency transactions?",
+        "options": [
+          "Digital Wallet",
+          "Mining",
+          "Blockchain",
+          "Encryption"
+        ],
+        "correct_answer": "Blockchain",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What does HTML stand for?",
+        "options": [
+          "Hyper Text Markup Language",
+          "High Tech Machine Learning",
+          "Hyper Transfer Markup Language",
+          "Hyperlink Text Management Logic"
+        ],
+        "correct_answer": "Hyper Text Markup Language",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which company developed the programming language TypeScript?",
+        "options": [
+          "Google",
+          "Microsoft",
+          "Apple",
+          "Facebook"
+        ],
+        "correct_answer": "Microsoft",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is the purpose of an API?",
+        "options": [
+          "To create user interfaces",
+          "To allow different software applications to communicate",
+          "To protect against malware",
+          "To compress data for storage"
+        ],
+        "correct_answer": "To allow different software applications to communicate",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which of these is a NoSQL database?",
+        "options": [
+          "MySQL",
+          "PostgreSQL",
+          "MongoDB",
+          "Oracle"
+        ],
+        "correct_answer": "MongoDB",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What does HTTPS stand for?",
+        "options": [
+          "Hyper Text Transfer Protocol Secure",
+          "Hyper Text Transfer Protection System",
+          "Hyper Text Transport Protocol Service",
+          "High Transfer Text Protocol Security"
+        ],
+        "correct_answer": "Hyper Text Transfer Protocol Secure",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which cloud computing service is provided by Amazon?",
+        "options": [
+          "Azure",
+          "Google Cloud",
+          "AWS",
+          "iCloud"
+        ],
+        "correct_answer": "AWS",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What component is primarily responsible for cooling in a computer?",
+        "options": [
+          "CPU",
+          "Heat sink",
+          "RAM",
+          "Power supply"
+        ],
+        "correct_answer": "Heat sink",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which protocol is used for sending emails?",
+        "options": [
+          "HTTP",
+          "FTP",
+          "SMTP",
+          "SSH"
+        ],
+        "correct_answer": "SMTP",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is the main function of a firewall in network security?",
+        "options": [
+          "Encrypting data",
+          "Monitoring network traffic",
+          "Filtering incoming and outgoing network traffic",
+          "Accelerating internet speed"
+        ],
+        "correct_answer": "Filtering incoming and outgoing network traffic",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which technology is used for short-range wireless communication between devices?",
+        "options": [
+          "Wi-Fi",
+          "Bluetooth",
+          "NFC",
+          "5G"
+        ],
+        "correct_answer": "Bluetooth",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What is the name of the first widely-used graphical web browser?",
+        "options": [
+          "Internet Explorer",
+          "Mosaic",
+          "Firefox",
+          "Chrome"
+        ],
+        "correct_answer": "Mosaic",
+        "difficulty": "Hard"
+      },
+      {
+        "question": "What does VPN stand for?",
+        "options": [
+          "Virtual Private Network",
+          "Visual Processing Node",
+          "Virtual Protocol Navigator",
+          "Variable Path Network"
+        ],
+        "correct_answer": "Virtual Private Network",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which programming paradigm focuses on applying functions to values without changing state?",
+        "options": [
+          "Object-oriented programming",
+          "Procedural programming",
+          "Functional programming",
+          "Imperative programming"
+        ],
+        "correct_answer": "Functional programming",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What does GPU stand for?",
+        "options": [
+          "Graphics Processing Unit",
+          "General Processing Unit",
+          "Graphical Performance Utility",
+          "Gaming Processor Unit"
+        ],
+        "correct_answer": "Graphics Processing Unit",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which of these is not a version control system?",
+        "options": [
+          "Git",
+          "Mercurial",
+          "Subversion",
+          "Jenkins"
+        ],
+        "correct_answer": "Jenkins",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What technology allows devices to communicate over the internet without human intervention?",
+        "options": [
+          "Artificial Intelligence",
+          "Internet of Things (IoT)",
+          "Machine Learning",
+          "Cloud Computing"
+        ],
+        "correct_answer": "Internet of Things (IoT)",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which algorithm is commonly used for public-key cryptography?",
+        "options": [
+          "AES",
+          "RSA",
+          "DES",
+          "MD5"
+        ],
+        "correct_answer": "RSA",
+        "difficulty": "Hard"
+      }
+    ],
+    "Art": [
+      {
+        "question": "Who painted 'The Starry Night'?",
+        "options": [
+          "Pablo Picasso",
+          "Vincent van Gogh",
+          "Leonardo da Vinci",
+          "Claude Monet"
+        ],
+        "correct_answer": "Vincent van Gogh",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which art movement is Salvador Dalí most associated with?",
+        "options": [
+          "Impressionism",
+          "Cubism",
+          "Surrealism",
+          "Pop Art"
+        ],
+        "correct_answer": "Surrealism",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Who sculpted 'David'?",
+        "options": [
+          "Donatello",
+          "Michelangelo",
+          "Leonardo da Vinci",
+          "Raphael"
+        ],
+        "correct_answer": "Michelangelo",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which artistic technique involves using small dots of color to create an image?",
+        "options": [
+          "Cubism",
+          "Pointillism",
+          "Fauvism",
+          "Expressionism"
+        ],
+        "correct_answer": "Pointillism",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Who painted 'The Persistence of Memory' with its iconic melting clocks?",
+        "options": [
+          "Pablo Picasso",
+          "Salvador Dalí",
+          "René Magritte",
+          "Frida Kahlo"
+        ],
+        "correct_answer": "Salvador Dalí",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which of these is not one of the primary colors in painting?",
+        "options": [
+          "Red",
+          "Yellow",
+          "Green",
+          "Blue"
+        ],
+        "correct_answer": "Green",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which artist is known for cutting off part of his ear?",
+        "options": [
+          "Vincent van Gogh",
+          "Paul Gauguin",
+          "Claude Monet",
+          "Edvard Munch"
+        ],
+        "correct_answer": "Vincent van Gogh",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which movement did the artist Wassily Kandinsky pioneer?",
+        "options": [
+          "Abstract Expressionism",
+          "Cubism",
+          "Abstract Art",
+          "Dadaism"
+        ],
+        "correct_answer": "Abstract Art",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Who painted the ceiling of the Sistine Chapel?",
+        "options": [
+          "Leonardo da Vinci",
+          "Raphael",
+          "Michelangelo",
+          "Donatello"
+        ],
+        "correct_answer": "Michelangelo",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which art movement emerged in the 1950s and featured Campbell's Soup cans?",
+        "options": [
+          "Minimalism",
+          "Pop Art",
+          "Abstract Expressionism",
+          "Conceptual Art"
+        ],
+        "correct_answer": "Pop Art",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is 'chiaroscuro' in art?",
+        "options": [
+          "A type of paint",
+          "The use of strong contrasts between light and dark",
+          "A form of sculpture",
+          "An Italian art school"
+        ],
+        "correct_answer": "The use of strong contrasts between light and dark",
+        "difficulty": "Hard"
+      },
+      {
+        "question": "Which famous Spanish artist co-founded Cubism?",
+        "options": [
+          "Salvador Dalí",
+          "Diego Velázquez",
+          "Pablo Picasso",
+          "Joan Miró"
+        ],
+        "correct_answer": "Pablo Picasso",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Who created the sculpture 'The Thinker'?",
+        "options": [
+          "Auguste Rodin",
+          "Michelangelo",
+          "Bernini",
+          "Henry Moore"
+        ],
+        "correct_answer": "Auguste Rodin",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which painting by Edvard Munch depicts a screaming figure against a landscape?",
+        "options": [
+          "The Persistence of Memory",
+          "The Scream",
+          "Guernica",
+          "Starry Night"
+        ],
+        "correct_answer": "The Scream",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What is fresco painting?",
+        "options": [
+          "Painting on wet plaster",
+          "Painting with watercolors",
+          "Painting on canvas",
+          "Painting with oil paints"
+        ],
+        "correct_answer": "Painting on wet plaster",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which artist is known for paintings of water lilies?",
+        "options": [
+          "Paul Cézanne",
+          "Claude Monet",
+          "Pierre-Auguste Renoir",
+          "Edgar Degas"
+        ],
+        "correct_answer": "Claude Monet",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What is the art of designing buildings called?",
+        "options": [
+          "Sculpture",
+          "Architecture",
+          "Graphic design",
+          "Industrial design"
+        ],
+        "correct_answer": "Architecture",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which American artist is known for his drip painting technique?",
+        "options": [
+          "Andy Warhol",
+          "Jackson Pollock",
+          "Mark Rothko",
+          "Roy Lichtenstein"
+        ],
+        "correct_answer": "Jackson Pollock",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "The renowned painting 'Girl with a Pearl Earring' was created by which Dutch artist?",
+        "options": [
+          "Rembrandt",
+          "Vincent van Gogh",
+          "Johannes Vermeer",
+          "Frans Hals"
+        ],
+        "correct_answer": "Johannes Vermeer",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which material is NOT typically used in traditional sculpture?",
+        "options": [
+          "Bronze",
+          "Marble",
+          "Wood",
+          "Acrylic"
+        ],
+        "correct_answer": "Acrylic",
+        "difficulty": "Medium"
+      }
+    ],
+    "Commerce": [
+      {
+        "question": "What is GDP?",
+        "options": [
+          "Gross Domestic Product",
+          "General Development Plan",
+          "Global Distribution Process",
+          "Government Debt Payment"
+        ],
+        "correct_answer": "Gross Domestic Product",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What does ROI stand for in business?",
+        "options": [
+          "Return On Investment",
+          "Risk Of Inflation",
+          "Rate Of Interest",
+          "Record Of Inventory"
+        ],
+        "correct_answer": "Return On Investment",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which of the following is not one of the 4 P's of Marketing?",
+        "options": [
+          "Price",
+          "Product",
+          "Promotion",
+          "Performance"
+        ],
+        "correct_answer": "Performance",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is a balance sheet used for?",
+        "options": [
+          "To show profit and loss",
+          "To show assets, liabilities, and equity",
+          "To track cash flow",
+          "To record daily transactions"
+        ],
+        "correct_answer": "To show assets, liabilities, and equity",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What type of market structure has many sellers offering similar but not identical products?",
+        "options": [
+          "Perfect competition",
+          "Monopoly",
+          "Monopolistic competition",
+          "Oligopoly"
+        ],
+        "correct_answer": "Monopolistic competition",
+        "difficulty": "Hard"
+      },
+      {
+        "question": "What is inflation?",
+        "options": [
+          "An increase in the overall level of prices",
+          "An increase in the value of currency",
+          "A decrease in unemployment",
+          "An increase in interest rates"
+        ],
+        "correct_answer": "An increase in the overall level of prices",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What does B2B stand for in business?",
+        "options": [
+          "Back to Business",
+          "Business to Business",
+          "Business to Buyer",
+          "Buyer to Business"
+        ],
+        "correct_answer": "Business to Business",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What is a hostile takeover?",
+        "options": [
+          "When a company buys another with the target company's approval",
+          "When employees take over a company's management",
+          "When a company acquires another against the wishes of the target's management",
+          "When a competitor launches a negative publicity campaign"
+        ],
+        "correct_answer": "When a company acquires another against the wishes of the target's management",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is EBITDA?",
+        "options": [
+          "Earnings Before Interest, Taxes, Depreciation, and Amortization",
+          "Economic Benefits In Trade Development Agreements",
+          "Expected Business Income Through Direct Actions",
+          "Enterprise Business Investment Tax Deduction Act"
+        ],
+        "correct_answer": "Earnings Before Interest, Taxes, Depreciation, and Amortization",
+        "difficulty": "Hard"
+      },
+      {
+        "question": "Which of these is not a type of business organization?",
+        "options": [
+          "Sole proprietorship",
+          "Partnership",
+          "Corporation",
+          "Delegation"
+        ],
+        "correct_answer": "Delegation",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What does SWOT stand for in business analysis?",
+        "options": [
+          "Strategic World Organization of Trade",
+          "Strengths, Weaknesses, Opportunities, and Threats",
+          "System Wide Operational Tactics",
+          "Sales, Workforce, Operations, Technology"
+        ],
+        "correct_answer": "Strengths, Weaknesses, Opportunities, and Threats",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is venture capital?",
+        "options": [
+          "Money invested in new or expanding businesses",
+          "Money borrowed from banks",
+          "Government grants for small businesses",
+          "Personal savings used to start a business"
+        ],
+        "correct_answer": "Money invested in new or expanding businesses",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is a bear market?",
+        "options": [
+          "A market where prices are rising",
+          "A market where prices are falling",
+          "A market dominated by aggressive investors",
+          "A market with high trading volume"
+        ],
+        "correct_answer": "A market where prices are falling",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What does CRM stand for in business?",
+        "options": [
+          "Customer Relationship Management",
+          "Corporate Resource Management",
+          "Critical Risk Mitigation",
+          "Current Rate Measurement"
+        ],
+        "correct_answer": "Customer Relationship Management",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What is a debenture?",
+        "options": [
+          "A type of equity share",
+          "An unsecured loan or bond",
+          "A financial derivative",
+          "A type of insurance policy"
+        ],
+        "correct_answer": "An unsecured loan or bond",
+        "difficulty": "Hard"
+      },
+      {
+        "question": "What is the primary function of a central bank?",
+        "options": [
+          "To provide loans to individuals",
+          "To regulate commercial banks and control monetary policy",
+          "To provide investment advice",
+          "To operate government-owned businesses"
+        ],
+        "correct_answer": "To regulate commercial banks and control monetary policy",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is the difference between gross profit and net profit?",
+        "options": [
+          "Gross profit includes taxes, net profit doesn't",
+          "Gross profit is before deducting expenses, net profit is after",
+          "They are different terms for the same concept",
+          "Gross profit applies to products, net profit to services"
+        ],
+        "correct_answer": "Gross profit is before deducting expenses, net profit is after",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which financial statement shows a company's revenues and expenses over a period of time?",
+        "options": [
+          "Balance Sheet",
+          "Cash Flow Statement",
+          "Income Statement",
+          "Statement of Retained Earnings"
+        ],
+        "correct_answer": "Income Statement",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is arbitrage?",
+        "options": [
+          "A type of investment fund",
+          "The process of buying and selling assets to profit from price differences",
+          "A long-term investment strategy",
+          "A method of calculating depreciation"
+        ],
+        "correct_answer": "The process of buying and selling assets to profit from price differences",
+        "difficulty": "Hard"
+      },
+      {
+        "question": "What does IPO stand for?",
+        "options": [
+          "International Purchasing Organization",
+          "Initial Public Offering",
+          "Investment Portfolio Option",
+          "Intellectual Property Ownership"
+        ],
+        "correct_answer": "Initial Public Offering",
+        "difficulty": "Easy"
+      }
+    ],
+    "Science": [
+      {
+        "question": "What is the chemical symbol for gold?",
+        "options": [
+          "Go",
+          "Gd",
+          "Au",
+          "Ag"
+        ],
+        "correct_answer": "Au",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which planet has the most moons?",
+        "options": [
+          "Jupiter",
+          "Saturn",
+          "Uranus",
+          "Neptune"
+        ],
+        "correct_answer": "Saturn",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is the hardest natural substance on Earth?",
+        "options": [
+          "Platinum",
+          "Quartz",
+          "Diamond",
+          "Titanium"
+        ],
+        "correct_answer": "Diamond",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What is the process by which plants make their own food called?",
+        "options": [
+          "Photosynthesis",
+          "Respiration",
+          "Fermentation",
+          "Digestion"
+        ],
+        "correct_answer": "Photosynthesis",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What is the smallest unit of life?",
+        "options": [
+          "Atom",
+          "Cell",
+          "Molecule",
+          "Organelle"
+        ],
+        "correct_answer": "Cell",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which of these is not a state of matter?",
+        "options": [
+          "Plasma",
+          "Gas",
+          "Energy",
+          "Liquid"
+        ],
+        "correct_answer": "Energy",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What does DNA stand for?",
+        "options": [
+          "Deoxyribonucleic Acid",
+          "Diribonucleic Acid",
+          "Deoxyribose Nucleic Acid",
+          "Deoxyribosenucleotide Acid"
+        ],
+        "correct_answer": "Deoxyribonucleic Acid",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which branch of physics deals with the motion of very small particles?",
+        "options": [
+          "Thermodynamics",
+          "Quantum mechanics",
+          "Classical mechanics",
+          "Relativity"
+        ],
+        "correct_answer": "Quantum mechanics",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is the equation for Einstein's theory of mass-energy equivalence?",
+        "options": [
+          "E = mc²",
+          "F = ma",
+          "E = hf",
+          "PV = nRT"
+        ],
+        "correct_answer": "E = mc²",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which element has the atomic number 1?",
+        "options": [
+          "Helium",
+          "Oxygen",
+          "Hydrogen",
+          "Carbon"
+        ],
+        "correct_answer": "Hydrogen",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "What is the main component of the Earth's atmosphere?",
+        "options": [
+          "Oxygen",
+          "Carbon dioxide",
+          "Nitrogen",
+          "Argon"
+        ],
+        "correct_answer": "Nitrogen",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which of the following is a correct statement of Newton's First Law of Motion?",
+        "options": [
+          "Force equals mass times acceleration",
+          "An object at rest stays at rest unless acted upon by an external force",
+          "For every action, there is an equal and opposite reaction",
+          "Energy cannot be created or destroyed"
+        ],
+        "correct_answer": "An object at rest stays at rest unless acted upon by an external force",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which of these organisms does NOT use photosynthesis?",
+        "options": [
+          "Trees",
+          "Algae",
+          "Fungi",
+          "Cyanobacteria"
+        ],
+        "correct_answer": "Fungi",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is the largest organ in the human body?",
+        "options": [
+          "Liver",
+          "Brain",
+          "Skin",
+          "Heart"
+        ],
+        "correct_answer": "Skin",
+        "difficulty": "Easy"
+      },
+      {
+        "question": "Which of these is a correct unit of electrical resistance?",
+        "options": [
+          "Volt",
+          "Watt",
+          "Ampere",
+          "Ohm"
+        ],
+        "correct_answer": "Ohm",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What phenomenon causes the sky to appear blue?",
+        "options": [
+          "Absorption of light",
+          "Reflection of the ocean",
+          "Rayleigh scattering",
+          "Refraction by water vapor"
+        ],
+        "correct_answer": "Rayleigh scattering",
+        "difficulty": "Hard"
+      },
+      {
+        "question": "What is the primary function of mitochondria in cells?",
+        "options": [
+          "Protein synthesis",
+          "Energy production",
+          "Cell division",
+          "Storage of genetic material"
+        ],
+        "correct_answer": "Energy production",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "Which of these is NOT a greenhouse gas?",
+        "options": [
+          "Carbon dioxide",
+          "Methane",
+          "Nitrogen",
+          "Water vapor"
+        ],
+        "correct_answer": "Nitrogen",
+        "difficulty": "Medium"
+      },
+      {
+        "question": "What is the half-life of a radioactive isotope?",
+        "options": [
+          "The time it takes for half of the atoms to decay",
+          "Half the average lifespan of the isotope",
+          "The time it takes for the isotope to become stable",
+          "Half the time it takes for full radiation emission"
+        ],
+        "correct_answer": "The time it takes for half of the atoms to decay",
+        "difficulty": "Hard"
+      },
+      {
+        "question": "Which of these waves has the longest wavelength?",
+        "options": [
+          "X-rays",
+          "Ultraviolet",
+          "Visible light",
+          "Radio waves"
+        ],
+        "correct_answer": "Radio waves",
+        "difficulty": "Medium"
+      }
+    ]
+  }
