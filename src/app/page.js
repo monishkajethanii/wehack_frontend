@@ -64,7 +64,7 @@ const StudentLoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (checkFormValidity()) {
       // Handle login logic here
       console.log("Login attempted with:", formData);
@@ -94,15 +94,15 @@ const StudentLoginPage = () => {
               </div>
             </div>
           </div>
-        <div className="mt-4 ml-4 text-center">
+          <div className="mt-4 ml-4 text-center">
             <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               Skill-Hire
             </h2>
             <p className="text-gray-400 mt-1 italic">
               Connect. Learn. Succeed.
             </p>
-        </div>
           </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
@@ -111,7 +111,9 @@ const StudentLoginPage = () => {
             </label>
             <div
               className={`flex items-center rounded-md border ${
-                errors.email && touched.email ? "border-red-500" : "border-gray-600"
+                errors.email && touched.email
+                  ? "border-red-500"
+                  : "border-gray-600"
               } px-3 py-2 bg-gray-800`}
             >
               <Mail className="mr-2 h-4 w-4 text-gray-400" />
@@ -162,8 +164,10 @@ const StudentLoginPage = () => {
             type="submit"
             className="flex w-full justify-center items-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-500 transition"
           >
-            <LogIn className="mr-2 h-4 w-4" />
-            Log in
+            <a href="/dashboard">
+              <LogIn className="mr-2 h-4 w-4" />
+              Log in
+            </a>
           </button>
 
           <div className="text-center mt-4">
