@@ -17,6 +17,7 @@ import {
   Menu,
   ChevronDown,
   RefreshCw,
+  Loader
 } from "lucide-react";
 
 const RecruiterDashboard = () => {
@@ -30,14 +31,14 @@ const RecruiterDashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
-    majorSkill: "",
+    desc: "",
+    major_skill: "",
     limit: "",
     gender: "any",
-    location: "online",
+    mode: "online",
     status: "1",
-    assessment: "mcq",
-    selectedQuestionId: null,
+    question_type: "mcq",
+    q_id: null,
   });
   const [challengeQuestions, setChallengeQuestions] = useState([]);
 
@@ -57,8 +58,10 @@ const RecruiterDashboard = () => {
       .then((response) => response.json())
       .then((challengesData) => {
         if (challengesData && Array.isArray(challengeQuestions)) {
-            console.log(challengesData)
-            setChallengeQuestions(getRandomChallengeQuestions(challengesData.questions));
+          console.log(challengesData);
+          setChallengeQuestions(
+            getRandomChallengeQuestions(challengesData.questions)
+          );
         }
       })
       .catch((error) => console.error("Error loading MCQ data:", error));
@@ -84,17 +87,19 @@ const RecruiterDashboard = () => {
     }
   };
 
-  const refreshChallengeQuestions = () =>{
+  const refreshChallengeQuestions = () => {
     fetch("/questions.json")
-    .then((response) => response.json())
-    .then((challengesData) => {
-      if (challengesData && Array.isArray(challengeQuestions)) {
-          console.log(challengesData)
-          setChallengeQuestions(getRandomChallengeQuestions(challengesData.questions));
-      }
-    })
-    .catch((error) => console.error("Error loading MCQ data:", error));
-  }
+      .then((response) => response.json())
+      .then((challengesData) => {
+        if (challengesData && Array.isArray(challengeQuestions)) {
+          console.log(challengesData);
+          setChallengeQuestions(
+            getRandomChallengeQuestions(challengesData.questions)
+          );
+        }
+      })
+      .catch((error) => console.error("Error loading MCQ data:", error));
+  };
 
   const handleSaveSelection = () => {
     console.log("Selected domain:", domain);
@@ -108,76 +113,51 @@ const RecruiterDashboard = () => {
     return shuffled.slice(0, 3);
   };
 
-//   const refreshChallengeQuestions = () => {
-//     try {
-//       if (challengesData && Array.isArray(challengesData)) {
-//         setChallengeQuestions(getRandomChallengeQuestions(challengesData));
-//       } else {
-//         setChallengeQuestions(
-//           getRandomChallengeQuestions(challengesData)
-//         );
-//       }
-//     } catch (error) {
-//       setChallengeQuestions(
-//         getRandomChallengeQuestions(challengesData)
-//       );
-//     }
-
-//     setFormData({
-//       ...formData,
-//       selectedQuestionId: null,
-//     });
-//   };
-
   const recruiterData = {
     name: "Jane Smith",
     company: "TechCorp",
     email: "jane.smith@techcorp.com",
   };
 
-  // Sample data for the dashboard
   const internships = [
     {
       id: 1,
       title: "Frontend Developer Intern",
-      description:
-        "Looking for a skilled frontend developer to join our team for a 3-month internship.",
-      majorSkill: "React",
+      desc: "Looking for a skilled frontend developer to join our team for a 3-month internship.",
+      major_skill: "React",
       limit: 5,
       gender: "any",
-      location: "Remote",
+      mode: "Remote",
       status: "1",
       applicants: 12,
       postedDate: "March 15, 2025",
-      assessment: "mcq",
+      question_type: "mcq",
     },
     {
       id: 2,
       title: "Backend Developer Intern",
-      description:
-        "Work on our server-side applications using Node.js and MongoDB.",
-      majorSkill: "Node.js",
+      desc: "Work on our server-side applications using Node.js and MongoDB.",
+      major_skill: "Node.js",
       limit: 3,
       gender: "any",
-      location: "On-site",
+      mode: "On-site",
       status: "1",
       applicants: 8,
       postedDate: "March 10, 2025",
-      assessment: "code challenge",
+      question_type: "code challenge",
     },
     {
       id: 3,
       title: "UI/UX Design Intern",
-      description:
-        "Help design user interfaces for our web and mobile applications.",
-      majorSkill: "Figma",
+      desc: "Help design user interfaces for our web and mobile applications.",
+      major_skill: "Figma",
       limit: 2,
       gender: "any",
-      location: "Hybrid",
+      mode: "Hybrid",
       status: "0",
       applicants: 0,
       postedDate: "March 18, 2025",
-      assessment: "mcq",
+      question_type: "mcq",
     },
   ];
 
@@ -192,41 +172,69 @@ const RecruiterDashboard = () => {
   const handleRadioChange = (e) => {
     setFormData({
       ...formData,
-      assessment: e.target.value,
-      selectedQuestionId: null,
+      question_type: e.target.value,
+      q_id: null,
     });
   };
 
   const handleQuestionSelect = (questionId) => {
     setFormData({
       ...formData,
-      selectedQuestionId: questionId,
+      q_id: questionId,
     });
+  };
+  const addOpportunity = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("https://wehack-backend.vercel.app/api/addopp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "auth": "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=" 
+        },
+        body: JSON.stringify(formData)
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to add opportunity");
+      }
+  
+      const data = await response.json();
+      console.log("Opportunity added successfully:", data);
+      
+      setFormData({
+        title: "",
+        desc: "",
+        major_skill: "",
+        limit: "",
+        gender: "any",
+        mode: "online",
+        status: "1",
+        question_type: "mcq",
+        q_id: null,
+      });
+      
+      setShowAddInternshipForm(false);
+      
+    } catch (error) {
+      console.error("Error adding opportunity:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    setFormData({
-      title: "",
-      description: "",
-      majorSkill: "",
-      limit: "",
-      gender: "any",
-      location: "online",
-      status: "1",
-      assessment: "mcq",
-      selectedQuestionId: null,
-    });
-    setShowAddInternshipForm(false);
-  };
+    addOpportunity();
+  }
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+
   if (isLoading) {
-    return <div className="p-4 text-white">Loading MCQ data...</div>;
+    return <Loader/>
   }
 
   return (
@@ -447,8 +455,8 @@ const RecruiterDashboard = () => {
                     </label>
                     <input
                       type="text"
-                      name="majorSkill"
-                      value={formData.majorSkill}
+                      name="major_skill"
+                      value={formData.major_skill}
                       onChange={handleInputChange}
                       required
                       className="w-full bg-gray-700 border-none rounded-md h-10 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -490,11 +498,11 @@ const RecruiterDashboard = () => {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-400 mb-1">
-                      Location*
+                      Location *
                     </label>
                     <select
-                      name="location"
-                      value={formData.location}
+                      name="mode"
+                      value={formData.mode}
                       onChange={handleInputChange}
                       required
                       className="w-full bg-gray-700 border-none rounded-md h-10 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -529,9 +537,9 @@ const RecruiterDashboard = () => {
                         <input
                           type="radio"
                           id="mcq"
-                          name="assessment"
+                          name="question_type"
                           value="mcq"
-                          checked={formData.assessment === "mcq"}
+                          checked={formData.question_type === "mcq"}
                           onChange={handleRadioChange}
                           className="h-4 w-4 text-blue-500 focus:ring-blue-500 bg-gray-700 border-gray-600"
                         />
@@ -546,9 +554,9 @@ const RecruiterDashboard = () => {
                         <input
                           type="radio"
                           id="codeChallenge"
-                          name="assessment"
+                          name="question_type"
                           value="code challenge"
-                          checked={formData.assessment === "code challenge"}
+                          checked={formData.question_type === "code challenge"}
                           onChange={handleRadioChange}
                           className="h-4 w-4 text-blue-500 focus:ring-blue-500 bg-gray-700 border-gray-600"
                         />
@@ -563,9 +571,11 @@ const RecruiterDashboard = () => {
                         <input
                           type="radio"
                           id="designChallenge"
-                          name="assessment"
+                          name="question_type"
                           value="design challenge"
-                          checked={formData.assessment === "design challenge"}
+                          checked={
+                            formData.question_type === "design challenge"
+                          }
                           onChange={handleRadioChange}
                           className="h-4 w-4 text-blue-500 focus:ring-blue-500 bg-gray-700 border-gray-600"
                         />
@@ -579,7 +589,7 @@ const RecruiterDashboard = () => {
                     </div>
                   </div>
 
-                  {formData.assessment === "mcq" && (
+                  {formData.question_type === "mcq" && (
                     <div className="p-4 bg-gray-900 rounded-lg border border-gray-800">
                       <h2 className="text-xl font-bold mb-4">MCQ Selection</h2>
 
@@ -663,7 +673,7 @@ const RecruiterDashboard = () => {
                     </div>
                   )}
 
-                  {formData.assessment === "code challenge" && (
+                  {formData.question_type === "code challenge" && (
                     <div className="md:col-span-2 bg-gray-700 p-4 rounded-md">
                       <div className="flex justify-between items-center mb-3">
                         <h3 className="text-sm font-medium text-gray-300">
@@ -683,7 +693,7 @@ const RecruiterDashboard = () => {
                           <div
                             key={question.id}
                             className={`p-3 rounded-md cursor-pointer border ${
-                              formData.selectedQuestionId === question.id
+                              formData.q_id === question.id
                                 ? "border-blue-500 bg-gray-600"
                                 : "border-gray-600 hover:bg-gray-650"
                             }`}
@@ -692,13 +702,12 @@ const RecruiterDashboard = () => {
                             <div className="flex items-start">
                               <div
                                 className={`h-4 w-4 rounded-full mt-0.5 mr-3 border ${
-                                  formData.selectedQuestionId === question.id
+                                  formData.q_id === question.id
                                     ? "bg-blue-500 border-blue-500"
                                     : "border-gray-500"
                                 }`}
                               >
-                                {formData.selectedQuestionId ===
-                                  question.id && (
+                                {formData.q_id === question.id && (
                                   <Check className="h-3 w-3 text-white" />
                                 )}
                               </div>
@@ -709,7 +718,7 @@ const RecruiterDashboard = () => {
                           </div>
                         ))}
                       </div>
-                      {!formData.selectedQuestionId && (
+                      {!formData.q_id && (
                         <p className="mt-3 text-xs text-red-400">
                           Please select a challenge question
                         </p>
@@ -722,8 +731,8 @@ const RecruiterDashboard = () => {
                       Description*
                     </label>
                     <textarea
-                      name="description"
-                      value={formData.description}
+                      name="desc"
+                      value={formData.desc}
                       onChange={handleInputChange}
                       required
                       rows="4"
@@ -744,12 +753,12 @@ const RecruiterDashboard = () => {
                   <button
                     type="submit"
                     disabled={
-                      formData.assessment === "code challenge" &&
-                      !formData.selectedQuestionId
+                      formData.question_type === "code challenge" &&
+                      !formData.q_id
                     }
                     className={`w-full sm:w-auto px-4 py-2 rounded-md text-white ${
-                      formData.assessment === "code challenge" &&
-                      !formData.selectedQuestionId
+                      formData.question_type === "code challenge" &&
+                      !formData.q_id
                         ? "bg-blue-600 opacity-50 cursor-not-allowed"
                         : "bg-blue-600 hover:bg-blue-700"
                     }`}
@@ -842,21 +851,21 @@ const RecruiterDashboard = () => {
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">
-                              {internship.majorSkill}
+                              {internship.major_skill}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                            {internship.location}
+                            {internship.mode}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                             <span
                               className={`px-2 py-1 rounded text-xs ${
-                                internship.assessment === "code challenge"
+                                internship.question_type === "code challenge"
                                   ? "bg-purple-900 text-purple-200"
                                   : "bg-blue-900 text-blue-200"
                               }`}
                             >
-                              {internship.assessment}
+                              {internship.question_type}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
@@ -914,16 +923,16 @@ const RecruiterDashboard = () => {
                         </h3>
                         <div className="flex items-center mt-1 space-x-3">
                           <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">
-                            {internship.majorSkill}
+                            {internship.major_skill}
                           </span>
                           <span
                             className={`px-2 py-1 rounded text-xs ${
-                              internship.assessment === "code challenge"
+                              internship.question_type === "code challenge"
                                 ? "bg-purple-900 text-purple-200"
                                 : "bg-blue-900 text-blue-200"
                             }`}
                           >
-                            {internship.assessment}
+                            {internship.question_type}
                           </span>
                           <span
                             className={`flex items-center text-xs ${
@@ -955,8 +964,8 @@ const RecruiterDashboard = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs text-gray-400 mt-3">
                       <div>
-                        <span className="block text-gray-500">Location</span>
-                        {internship.location}
+                        <span className="block text-gray-500">mode</span>
+                        {internship.mode}
                       </div>
                       <div>
                         <span className="block text-gray-500">Seats</span>

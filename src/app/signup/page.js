@@ -316,8 +316,15 @@ const StudentSignupForm = () => {
           </p>
         )}
       </div>
+      <div className="text-center mt-4">
+        <span className="text-gray-400 text-sm">
+          Want to register as recruiter?{" "}
+          <a href="/recruitersignup" className="text-blue-400 hover:text-blue-300">
+            Sign up
+          </a>
+        </span>
+      </div>
     </div>,
-
     <div key="education" className="space-y-4">
       <h2 className="text-xl font-bold text-white">Education</h2>
       <div className="space-y-2">
@@ -534,9 +541,36 @@ const StudentSignupForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formStep === formSteps.length - 1) {
-      // Handle form submission logic here
-      console.log("Form submitted:", formData);
-      // You would typically send this data to your server
+      const formattedData = {
+        user_id: formData.email.split("@")[0],
+        name: formData.name,
+        college_name: formData.education.college,
+        grad_year: formData.education.graduationYear,
+        gender: formData.gender,
+        skills: formData.skills,
+        location: formData.location,
+        email: formData.email,
+        resume: resumeFileName,
+        password: formData.password,
+      };
+
+      fetch("/signupUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+        },
+        body: JSON.stringify(formattedData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+
+      console.log("Form submitted with formatted data:", formattedData);
     }
   };
 
