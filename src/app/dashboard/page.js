@@ -413,8 +413,11 @@ const StudentDashboard = () => {
                     onClick={() => {
                       if (internship.question_type === "mcq") {
                         window.location.href = "/mcq";
-                      } else {
+                      } else if(internship.question_type === "code challenge"){
                         window.location.href = "/challenge?qbId=" + internship.qbId;
+                      }
+                      else{
+                        window.location.href = "/designchallenge"
                       }
                     }}
                   >
