@@ -28,7 +28,7 @@ const StudentDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [studentData, setStudent] = useState({ name: "Loading..." });
   const [oppurtunity, setOppurtunity] = useState([]);
-  
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -52,7 +52,7 @@ const StudentDashboard = () => {
   const fetchUserInfo = async () => {
     const stringifyData = await localStorage.getItem("loggedin");
     const rawData = JSON.parse(stringifyData);
-    
+
     if (!rawData) {
       setStudent({
         name: "Dummy user.",
@@ -61,7 +61,7 @@ const StudentDashboard = () => {
       });
       return;
     }
-    
+
     setStudent({
       name: rawData.name,
       email: rawData.email,
@@ -73,7 +73,7 @@ const StudentDashboard = () => {
       grad_year: rawData.grad_year,
       gender: rawData.gender,
     });
-    
+
     console.log(rawData);
     console.log(studentData);
   };
@@ -90,22 +90,43 @@ const StudentDashboard = () => {
           },
         }
       );
-      
+
       if (response.status === 200 && response.data && response.data.data) {
-        const formattedData = response.data.data.map((item) => ({
-          id: item.id || Math.random().toString(36).substr(2, 9),
-          company: item.company_name || "Unknown Company",
-          role: item.title || "Position",
-          desc: item.desc || "Description",
-          location: item.mode || "Remote",
-          duration: item.duration || "Not specified",
-          stipend: item.stipend || "Not specified",
-          deadline: item.deadline || "Not specified",
-          logo: item.logo || (item.company_name ? item.company_name[0] : "C"),
-          skills: item.major_skill || [],
-          status: item.status || "",
-        }));
-        
+        const formattedData = response.data.data.map((item) => {
+          const handleNavigation = (mode, qbId) => {
+            if (mode.toLowerCase().includes("mcq")) {
+              return `/mcq/${qbId}`;
+            } else if (mode.toLowerCase().includes("code challenge")) {
+              return `/code-challenge/${qbId}`;
+            } else if (mode.toLowerCase().includes("design challenge")) {
+              return `/design-challenge/${qbId}`;
+            } else {
+              return "";
+            }
+          };
+
+          // Calculate navRoute for each item
+          const navRoute = item.qb_id
+            ? handleNavigation(item.mode || "", item.qb_id)
+            : "";
+
+          return {
+            id: item.id || Math.random().toString(36).substr(2, 9),
+            company: item.company_name || "Unknown Company",
+            role: item.title || "Position",
+            desc: item.desc || "Description",
+            location: item.mode || "Remote",
+            duration: item.duration || "Not specified",
+            stipend: item.stipend || "Not specified",
+            deadline: item.deadline || "Not specified",
+            logo: item.logo || (item.company_name ? item.company_name[0] : "C"),
+            skills: item.major_skill || [],
+            status: item.status || "",
+            navRoute: navRoute, // Include the navigation route in the returned object
+            qbId: item.qb_id || null,
+          };
+        });
+
         console.log("formattedData", formattedData);
         setOppurtunity(formattedData);
         console.log("setData ", oppurtunity);
@@ -119,46 +140,6 @@ const StudentDashboard = () => {
       alert(error.message);
     }
   };
-
-  // Sample data for the dashboard
-  const internships = [
-    {
-      id: 1,
-      company: "TechCorp",
-      role: "Frontend Developer Intern",
-      location: "Mumbai, India (Remote)",
-      duration: "3 months",
-      stipend: "₹25,000/month",
-      deadline: "April 10, 2025",
-      logo: "T",
-      skills: ["React", "JavaScript", "CSS"],
-      status: "new",
-    },
-    {
-      id: 2,
-      company: "DataSoft Systems",
-      role: "Backend Developer Intern",
-      location: "Bangalore, India",
-      duration: "6 months",
-      stipend: "₹30,000/month",
-      deadline: "April 5, 2025",
-      logo: "D",
-      skills: ["Node.js", "MongoDB", "Express"],
-      status: "new",
-    },
-    {
-      id: 3,
-      company: "CloudVision",
-      role: "Full Stack Developer Intern",
-      location: "Pune, India (Hybrid)",
-      duration: "4 months",
-      stipend: "₹28,000/month",
-      deadline: "April 15, 2025",
-      logo: "C",
-      skills: ["React", "Node.js", "AWS"],
-      status: "",
-    },
-  ];
 
   const problems = [
     {
@@ -296,7 +277,12 @@ const StudentDashboard = () => {
           </ul>
         </nav>
 
-        <div className="p-4 border-t border-gray-800" onClick={() => { localStorage.clear() }}>
+        <div
+          className="p-4 border-t border-gray-800"
+          onClick={() => {
+            localStorage.clear();
+          }}
+        >
           <a
             href="/"
             className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 text-gray-400"
@@ -415,11 +401,9 @@ const StudentDashboard = () => {
 
                         <div className="mt-3 flex flex-col sm:flex-row sm:justify-between sm:items-center">
                           <div className="flex flex-wrap gap-2 mb-2 sm:mb-0">
-                          <span 
-                                 className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs"
-                                >
-                                  {internship.skills}
-                                </span>
+                            <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">
+                              {internship.skills}
+                            </span>
                           </div>
 
                           {/* <span className="text-green-400 font-medium">
@@ -428,14 +412,31 @@ const StudentDashboard = () => {
                         </div>
                       </div>
 
-                      <button className="ml-auto mt-3 md:mt-0 md:ml-4 text-blue-400 hover:text-blue-300">
-                        <ChevronRight className="h-5 w-5" />
+                      <button
+                        className="ml-auto mt-3 md:mt-0 md:ml-4 text-blue-400 hover:text-blue-300"
+                        onClick={() => {
+                          if (internship.navRoute) {
+                            router.push(internship.navRoute);
+                          }
+                        }}
+                      >
+                        {internship.mode === "mcq" ? (
+                          <a href="/mcq">
+                            <ChevronRight className="h-5 w-5" />
+                          </a>
+                        ) : (
+                          <a href="/challenge">
+                            <ChevronRight className="h-5 w-5" />
+                          </a>
+                        )}
                       </button>
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-400 text-center py-4">No internships available at the moment.</p>
+                <p className="text-gray-400 text-center py-4">
+                  No internships available at the moment.
+                </p>
               )}
 
               <button className="w-full py-2 mt-4 rounded-md border border-gray-700 text-gray-400 hover:bg-gray-800 transition">
