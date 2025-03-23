@@ -22,7 +22,58 @@ const CodeEditorPage = () => {
     
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
+  useEffect(() => {
+    const disableKeys = (event) => {
+      // Block all Ctrl and Alt combinations
+      if (event.ctrlKey || event.altKey) {
+        event.preventDefault();
+        console.log("Ctrl and Alt keys are disabled!");
+      }
+      
+      // Block specific combinations
+      if (event.ctrlKey && ["c", "v", "s", "p", "a", "f"].includes(event.key.toLowerCase())) {
+        event.preventDefault();
+        console.log(`Ctrl+${event.key.toUpperCase()} is disabled!`);
+      }
+      
+      // Block F12 key (Developer tools)
+      if (event.key === "F12") {
+        event.preventDefault();
+        console.log("F12 is disabled!");
+      }
+      
+      // Block Alt+Tab
+      if (event.altKey && event.key === "Tab") {
+        event.preventDefault();
+        console.log("Alt+Tab is disabled!");
+      }
+      
+      // Block browser shortcuts
+      if (
+        (event.ctrlKey && event.shiftKey && event.key === "I") || // Chrome/Firefox dev tools
+        (event.ctrlKey && event.shiftKey && event.key === "J") || // Chrome dev tools
+        (event.ctrlKey && event.shiftKey && event.key === "C") || // Chrome inspect element
+        (event.metaKey && event.altKey && event.key === "I") || // Safari dev tools
+        (event.key === "F11") // Fullscreen mode
+      ) {
+        event.preventDefault();
+        console.log("Browser developer shortcuts are disabled!");
+      }
+    };
   
+    const disableRightClick = (event) => {
+      event.preventDefault();
+      console.log("Right-click is disabled!");
+    };
+  
+    document.addEventListener("keydown", disableKeys);
+    document.addEventListener("contextmenu", disableRightClick);
+  
+    return () => {
+      document.removeEventListener("keydown", disableKeys);
+      document.removeEventListener("contextmenu", disableRightClick);
+    };
+  }, []);
   useEffect(() => {
     if (isMobile) {
       setIsCollapsed(false);
