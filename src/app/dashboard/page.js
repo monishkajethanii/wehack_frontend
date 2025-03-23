@@ -28,9 +28,65 @@ const StudentDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [studentData, setStudent] = useState({ name: "Loading..." });
   const [oppurtunity, setOppurtunity] = useState([]);
-  
+  // for history
+  const [email, setEmail] = useState("");
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  useEffect(() => {
+    const getEmailFromStorage = async () => {
+      try {
+        const stringifyData = await localStorage.getItem("loggedin");
+        if (stringifyData) {
+          const rawData = JSON.parse(stringifyData);
+          if (rawData?.email) {
+            setEmail(rawData.email);
+            fetchHistory(rawData.email);
+          } else {
+            setError("Email not found in local storage");
+          }
+        } else {
+          setError("No logged-in user data found");
+        }
+      } catch (err) {
+        setError("Error accessing local storage");
+      }
+    };
+
+    getEmailFromStorage();
+  }, []);
+
+  const fetchHistory = async (userEmail) => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch(
+        "https://wehack-backend.vercel.app/getUserHistory",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+          },
+          body: JSON.stringify({ email: userEmail }),
+        }
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        setHistory(result.data);
+      } else {
+        setError(result.error || "Failed to fetch user history");
+      }
+    } catch (err) {
+      setError("Something went wrong");
+    }
+    setLoading(false);
   };
 
   //check user loggedin status
@@ -52,7 +108,7 @@ const StudentDashboard = () => {
   const fetchUserInfo = async () => {
     const stringifyData = await localStorage.getItem("loggedin");
     const rawData = JSON.parse(stringifyData);
-    
+
     if (!rawData) {
       setStudent({
         name: "Dummy user.",
@@ -61,7 +117,7 @@ const StudentDashboard = () => {
       });
       return;
     }
-    
+
     setStudent({
       name: rawData.name,
       email: rawData.email,
@@ -73,7 +129,7 @@ const StudentDashboard = () => {
       grad_year: rawData.grad_year,
       gender: rawData.gender,
     });
-    
+
     console.log(rawData);
     console.log(studentData);
   };
@@ -90,22 +146,43 @@ const StudentDashboard = () => {
           },
         }
       );
-      
+
       if (response.status === 200 && response.data && response.data.data) {
-        const formattedData = response.data.data.map((item) => ({
-          id: item.id || Math.random().toString(36).substr(2, 9),
-          company: item.company_name || "Unknown Company",
-          role: item.title || "Position",
-          desc: item.desc || "Description",
-          location: item.mode || "Remote",
-          duration: item.duration || "Not specified",
-          stipend: item.stipend || "Not specified",
-          deadline: item.deadline || "Not specified",
-          logo: item.logo || (item.company_name ? item.company_name[0] : "C"),
-          skills: item.major_skill || [],
-          status: item.status || "",
-        }));
-        
+        const formattedData = response.data.data.map((item) => {
+          const handleNavigation = (mode, qbId) => {
+            if (mode.toLowerCase().includes("mcq")) {
+              return `/mcq/${qbId}`;
+            } else if (mode.toLowerCase().includes("code challenge")) {
+              return `/code-challenge/${qbId}`;
+            } else if (mode.toLowerCase().includes("design challenge")) {
+              return `/design-challenge/${qbId}`;
+            } else {
+              return "";
+            }
+          };
+
+          // Calculate navRoute for each item
+          const navRoute = item.qb_id
+            ? handleNavigation(item.mode || "", item.qb_id)
+            : "";
+
+          return {
+            id: item.id || Math.random().toString(36).substr(2, 9),
+            company: item.company_name || "Unknown Company",
+            role: item.title || "Position",
+            desc: item.desc || "Description",
+            location: item.mode || "Remote",
+            duration: item.duration || "Not specified",
+            stipend: item.stipend || "Not specified",
+            deadline: item.deadline || "Not specified",
+            logo: item.logo || (item.company_name ? item.company_name[0] : "C"),
+            skills: item.major_skill || [],
+            status: item.status || "",
+            navRoute: navRoute, // Include the navigation route in the returned object
+            qbId: item.qb_id || null,
+          };
+        });
+
         console.log("formattedData", formattedData);
         setOppurtunity(formattedData);
         console.log("setData ", oppurtunity);
@@ -119,46 +196,6 @@ const StudentDashboard = () => {
       alert(error.message);
     }
   };
-
-  // Sample data for the dashboard
-  const internships = [
-    {
-      id: 1,
-      company: "TechCorp",
-      role: "Frontend Developer Intern",
-      location: "Mumbai, India (Remote)",
-      duration: "3 months",
-      stipend: "₹25,000/month",
-      deadline: "April 10, 2025",
-      logo: "T",
-      skills: ["React", "JavaScript", "CSS"],
-      status: "new",
-    },
-    {
-      id: 2,
-      company: "DataSoft Systems",
-      role: "Backend Developer Intern",
-      location: "Bangalore, India",
-      duration: "6 months",
-      stipend: "₹30,000/month",
-      deadline: "April 5, 2025",
-      logo: "D",
-      skills: ["Node.js", "MongoDB", "Express"],
-      status: "new",
-    },
-    {
-      id: 3,
-      company: "CloudVision",
-      role: "Full Stack Developer Intern",
-      location: "Pune, India (Hybrid)",
-      duration: "4 months",
-      stipend: "₹28,000/month",
-      deadline: "April 15, 2025",
-      logo: "C",
-      skills: ["React", "Node.js", "AWS"],
-      status: "",
-    },
-  ];
 
   const problems = [
     {
@@ -228,7 +265,7 @@ const StudentDashboard = () => {
 
         <div className="flex items-center">
           <h2 className="font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Skill-Hire
+            SkillHire
           </h2>
         </div>
 
@@ -282,21 +319,12 @@ const StudentDashboard = () => {
           </div>
         </div>
 
-        <nav className="flex-1 p-4">
-          <ul className="">
-            <li>
-              <a
-                href="#"
-                className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800"
-              >
-                <History className="h-5 w-5 text-gray-400" />
-                <span>History</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="p-4 border-t border-gray-800" onClick={() => { localStorage.clear() }}>
+        <div
+          className="p-4 border-t border-gray-800"
+          onClick={() => {
+            localStorage.clear();
+          }}
+        >
           <a
             href="/"
             className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 text-gray-400"
@@ -415,11 +443,9 @@ const StudentDashboard = () => {
 
                         <div className="mt-3 flex flex-col sm:flex-row sm:justify-between sm:items-center">
                           <div className="flex flex-wrap gap-2 mb-2 sm:mb-0">
-                          <span 
-                                 className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs"
-                                >
-                                  {internship.skills}
-                                </span>
+                            <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">
+                              {internship.skills}
+                            </span>
                           </div>
 
                           {/* <span className="text-green-400 font-medium">
@@ -428,14 +454,31 @@ const StudentDashboard = () => {
                         </div>
                       </div>
 
-                      <button className="ml-auto mt-3 md:mt-0 md:ml-4 text-blue-400 hover:text-blue-300">
-                        <ChevronRight className="h-5 w-5" />
+                      <button
+                        className="ml-auto mt-3 md:mt-0 md:ml-4 text-blue-400 hover:text-blue-300"
+                        onClick={() => {
+                          if (internship.navRoute) {
+                            router.push(internship.navRoute);
+                          }
+                        }}
+                      >
+                        {internship.mode === "mcq" ? (
+                          <a href="/mcq">
+                            <ChevronRight className="h-5 w-5" />
+                          </a>
+                        ) : (
+                          <a href="/challenge">
+                            <ChevronRight className="h-5 w-5" />
+                          </a>
+                        )}
                       </button>
                     </div>
                   </div>
                 ))
               ) : (
-                <p className="text-gray-400 text-center py-4">No internships available at the moment.</p>
+                <p className="text-gray-400 text-center py-4">
+                  No internships available at the moment.
+                </p>
               )}
 
               <button className="w-full py-2 mt-4 rounded-md border border-gray-700 text-gray-400 hover:bg-gray-800 transition">
@@ -560,74 +603,51 @@ const StudentDashboard = () => {
           )}
         </main>
       </div>
+      <div className="bg-black text-white min-h-screen flex flex-col p-4">
+        {/* <h1 className="text-2xl font-bold mb-4">User History</h1> */}
+        {email ? (
+          <p className="mb-4 text-gray-400">
+            Showing history for: <span className="font-bold">{email}</span>
+          </p>
+        ) : (
+          <p className="text-red-500">{error}</p>
+        )}
 
-      {/* Activity Sidebar - Hidden on mobile, tablet */}
-      <div className="hidden lg:block w-72 bg-gray-900 border-l border-gray-800">
-        <div className="p-4 border-b border-gray-800">
-          <h2 className="font-bold text-lg">Activity History</h2>
-        </div>
+       
 
-        <div className="p-4">
-          <h3 className="text-sm font-medium text-gray-400 mb-3">
-            Recently Enrolled
-          </h3>
-
-          <div className="space-y-3">
-            {recentPractice.map((item) => (
-              <div key={item.id} className="flex items-start">
-                <div
-                  className={`h-8 w-8 rounded-full flex items-center justify-center mr-3 ${
-                    item.status === "Completed"
-                      ? "bg-green-900 text-green-300"
-                      : "bg-yellow-900 text-yellow-300"
-                  }`}
-                >
-                  {item.status === "Completed" ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Clock className="h-4 w-4" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm">{item.title}</p>
-                  <p className="text-xs text-gray-400">{item.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="block lg:hidden bg-gray-900 border-t border-gray-800 p-4">
-        <h2 className="font-bold text-lg mb-3">Activity History</h2>
-
-        <div className="flex overflow-x-auto space-x-4 pb-2">
-          {recentPractice.map((item) => (
-            <div
-              key={item.id}
-              className="flex-shrink-0 w-64 bg-gray-800 p-3 rounded-lg border border-gray-700"
-            >
-              <div className="flex items-start">
-                <div
-                  className={`h-8 w-8 rounded-full flex items-center justify-center mr-3 ${
-                    item.status === "Completed"
-                      ? "bg-green-900 text-green-300"
-                      : "bg-yellow-900 text-yellow-300"
-                  }`}
-                >
-                  {item.status === "Completed" ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Clock className="h-4 w-4" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm">{item.title}</p>
-                  <p className="text-xs text-gray-400">{item.time}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="mt-6 w-full max-w-6xl overflow-x-auto">
+          {history.length > 0 ? (
+            <table className="w-full border border-white">
+              <thead>
+                <tr className="bg-gray-800">
+                  <th className="p-2 border border-white">Title</th>
+                  <th className="p-2 border border-white">Company Name</th>
+                  <th className="p-2 border border-white">Status</th>
+                  <th className="p-2 border border-white">Mode</th>
+                  <th className="p-2 border border-white">Q_ID</th>
+                  <th className="p-2 border border-white">Question Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.map((item, index) => (
+                  <tr key={index} className="border border-white text-center">
+                    <td className="p-2 border border-white">{item.title}</td>
+                    <td className="p-2 border border-white">
+                      {item.company_name}
+                    </td>
+                    <td className="p-2 border border-white">{item.status}</td>
+                    <td className="p-2 border border-white">{item.mode}</td>
+                    <td className="p-2 border border-white">{item.q_id}</td>
+                    <td className="p-2 border border-white">
+                      {item.question_type}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-gray-400">No history found.</p>
+          )}
         </div>
       </div>
     </div>

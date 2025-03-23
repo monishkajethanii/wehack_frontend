@@ -425,7 +425,6 @@ const StudentSignupForm = () => {
         )}
       </div>
 
-      {/* Resume upload field */}
       <div className="space-y-2">
         <label className="block text-sm font-medium text-white">
           Resume (PDF) *

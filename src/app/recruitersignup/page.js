@@ -9,8 +9,9 @@ import {
   User,
   FileText,
   CheckCircle,
+  Lock,
   AlertCircle,
-  Tag
+  Tag,
 } from "lucide-react";
 
 const RecruiterSignupForm = () => {
@@ -25,7 +26,24 @@ const RecruiterSignupForm = () => {
     employeePosition: "",
     companyAddress: "",
     email: "",
+    password: "",
   });
+
+  const addRecruiter = () => {
+    return {
+      id: Date.now(),
+      company_name: formData.companyName,
+      gst_no: formData.gstNo,
+      website: formData.website,
+      type: formData.companyType,
+      emp_id: formData.employeeId,
+      emp_name: formData.employeeName,
+      emp_position: formData.employeePosition,
+      comp_address: formData.companyAddress,
+      email: formData.email,
+      password: formData.password,
+    };
+  };
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
@@ -40,6 +58,7 @@ const RecruiterSignupForm = () => {
     employeePosition: /^[a-zA-Z\s.&,'-]{2,50}$/,
     companyAddress: /^[a-zA-Z0-9\s,.'()-]{5,200}$/,
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+    password: /^[0-9]{4}$/,
   };
 
   const errorMessages = {
@@ -47,11 +66,13 @@ const RecruiterSignupForm = () => {
     gstNo: "Please enter a valid GST number (15 characters)",
     website: "Please enter a valid website URL",
     companyType: "Please select a company type",
-    employeeId: "Please enter a valid employee ID (2-20 alphanumeric characters)",
+    employeeId:
+      "Please enter a valid employee ID (2-20 alphanumeric characters)",
     employeeName: "Please enter a valid name (2-50 characters, letters only)",
     employeePosition: "Please enter a valid job position (2-50 characters)",
     companyAddress: "Please enter a valid address (5-200 characters)",
     email: "Please enter a valid email address",
+    password: "Please enter a valid 4-digit pin",
   };
 
   const validateField = (field, value) => {
@@ -94,7 +115,7 @@ const RecruiterSignupForm = () => {
         newErrors.gstNo = errorMessages.gstNo;
         isValid = false;
       }
-      if (formData.website==="") {
+      if (formData.website === "") {
         newErrors.website = errorMessages.website;
         isValid = false;
       }
@@ -111,7 +132,9 @@ const RecruiterSignupForm = () => {
         newErrors.employeeName = errorMessages.employeeName;
         isValid = false;
       }
-      if (!validationPatterns.employeePosition.test(formData.employeePosition)) {
+      if (
+        !validationPatterns.employeePosition.test(formData.employeePosition)
+      ) {
         newErrors.employeePosition = errorMessages.employeePosition;
         isValid = false;
       }
@@ -122,6 +145,10 @@ const RecruiterSignupForm = () => {
       }
       if (!validationPatterns.email.test(formData.email)) {
         newErrors.email = errorMessages.email;
+        isValid = false;
+      }
+      if (!validationPatterns.password.test(formData.password)) {
+        newErrors.password = errorMessages.password;
         isValid = false;
       }
     }
@@ -150,7 +177,7 @@ const RecruiterSignupForm = () => {
   const getFieldsForStep = (step) => {
     if (step === 0) return ["companyName", "gstNo", "website", "companyType"];
     if (step === 1) return ["employeeId", "employeeName", "employeePosition"];
-    if (step === 2) return ["companyAddress", "email"];
+    if (step === 2) return ["companyAddress", "email", "password"];
     return [];
   };
 
@@ -163,7 +190,9 @@ const RecruiterSignupForm = () => {
         </label>
         <div
           className={`flex items-center rounded-md border ${
-            errors.companyName && touched.companyName ? "border-red-500" : "border-gray-600"
+            errors.companyName && touched.companyName
+              ? "border-red-500"
+              : "border-gray-600"
           } px-3 py-2 bg-gray-800`}
         >
           <Building className="mr-2 h-4 w-4 text-gray-400" />
@@ -215,7 +244,9 @@ const RecruiterSignupForm = () => {
         </label>
         <div
           className={`flex items-center rounded-md border ${
-            errors.website && touched.website ? "border-red-500" : "border-gray-600"
+            errors.website && touched.website
+              ? "border-red-500"
+              : "border-gray-600"
           } px-3 py-2 bg-gray-800`}
         >
           <Globe className="mr-2 h-4 w-4 text-gray-400" />
@@ -236,9 +267,18 @@ const RecruiterSignupForm = () => {
       </div>
 
       <div className="space-y-2">
-        <label className="block text-sm font-medium text-white">Company Type *</label>
+        <label className="block text-sm font-medium text-white">
+          Company Type *
+        </label>
         <div className="grid grid-cols-3 gap-2">
-          {["IT/Software", "Manufacturing", "Services", "Education", "Healthcare", "Other"].map((option) => (
+          {[
+            "IT/Software",
+            "Manufacturing",
+            "Services",
+            "Education",
+            "Healthcare",
+            "Other",
+          ].map((option) => (
             <button
               key={option}
               type="button"
@@ -269,7 +309,9 @@ const RecruiterSignupForm = () => {
         </label>
         <div
           className={`flex items-center rounded-md border ${
-            errors.employeeId && touched.employeeId ? "border-red-500" : "border-gray-600"
+            errors.employeeId && touched.employeeId
+              ? "border-red-500"
+              : "border-gray-600"
           } px-3 py-2 bg-gray-800`}
         >
           <Tag className="mr-2 h-4 w-4 text-gray-400" />
@@ -295,7 +337,9 @@ const RecruiterSignupForm = () => {
         </label>
         <div
           className={`flex items-center rounded-md border ${
-            errors.employeeName && touched.employeeName ? "border-red-500" : "border-gray-600"
+            errors.employeeName && touched.employeeName
+              ? "border-red-500"
+              : "border-gray-600"
           } px-3 py-2 bg-gray-800`}
         >
           <User className="mr-2 h-4 w-4 text-gray-400" />
@@ -321,7 +365,9 @@ const RecruiterSignupForm = () => {
         </label>
         <div
           className={`flex items-center rounded-md border ${
-            errors.employeePosition && touched.employeePosition ? "border-red-500" : "border-gray-600"
+            errors.employeePosition && touched.employeePosition
+              ? "border-red-500"
+              : "border-gray-600"
           } px-3 py-2 bg-gray-800`}
         >
           <Briefcase className="mr-2 h-4 w-4 text-gray-400" />
@@ -350,7 +396,9 @@ const RecruiterSignupForm = () => {
         </label>
         <div
           className={`flex items-center rounded-md border ${
-            errors.companyAddress && touched.companyAddress ? "border-red-500" : "border-gray-600"
+            errors.companyAddress && touched.companyAddress
+              ? "border-red-500"
+              : "border-gray-600"
           } px-3 py-2 bg-gray-800`}
         >
           <MapPin className="mr-2 h-4 w-4 text-gray-400" />
@@ -395,14 +443,42 @@ const RecruiterSignupForm = () => {
           </p>
         )}
       </div>
+      <div className="space-y-2">
+        <label className="block text-sm font-medium text-white">
+          4-Digit PIN *
+        </label>
+        <div
+          className={`flex items-center rounded-md border ${
+            errors.password && touched.password
+              ? "border-red-500"
+              : "border-gray-600"
+          } px-3 py-2 bg-gray-800`}
+        >
+          <Lock className="mr-2 h-4 w-4 text-gray-400" />
+          <input
+            type="password"
+            value={formData.password}
+            onChange={(e) => updateFormData("password", e.target.value)}
+            className="w-full border-0 bg-transparent p-0 focus:outline-none text-white"
+            placeholder="1234"
+            required
+            maxLength={4}
+          />
+        </div>
+        {errors.password && touched.password && (
+          <p className="text-red-500 text-xs mt-1 flex items-center">
+            <AlertCircle className="h-3 w-3 mr-1" /> {errors.password}
+          </p>
+        )}
+      </div>
     </div>,
-
     <div key="review" className="space-y-4">
       <h2 className="text-xl font-bold text-white">Review Your Information</h2>
       <div className="rounded-lg bg-gray-800 p-4 text-white">
         <h3 className="font-medium text-blue-400">Company Details</h3>
         <p className="mt-1">
-          <span className="font-medium">Company Name:</span> {formData.companyName}
+          <span className="font-medium">Company Name:</span>{" "}
+          {formData.companyName}
         </p>
         <p className="mt-1">
           <span className="font-medium">GST Number:</span> {formData.gstNo}
@@ -411,23 +487,28 @@ const RecruiterSignupForm = () => {
           <span className="font-medium">Website:</span> {formData.website}
         </p>
         <p className="mt-1">
-          <span className="font-medium">Company Type:</span> {formData.companyType}
+          <span className="font-medium">Company Type:</span>{" "}
+          {formData.companyType}
         </p>
 
         <h3 className="mt-4 font-medium text-blue-400">Employee Details</h3>
         <p className="mt-1">
-          <span className="font-medium">Employee ID:</span> {formData.employeeId}
+          <span className="font-medium">Employee ID:</span>{" "}
+          {formData.employeeId}
         </p>
         <p className="mt-1">
-          <span className="font-medium">Employee Name:</span> {formData.employeeName}
+          <span className="font-medium">Employee Name:</span>{" "}
+          {formData.employeeName}
         </p>
         <p className="mt-1">
-          <span className="font-medium">Position:</span> {formData.employeePosition}
+          <span className="font-medium">Position:</span>{" "}
+          {formData.employeePosition}
         </p>
 
         <h3 className="mt-4 font-medium text-blue-400">Contact Information</h3>
         <p className="mt-1">
-          <span className="font-medium">Company Address:</span> {formData.companyAddress}
+          <span className="font-medium">Company Address:</span>{" "}
+          {formData.companyAddress}
         </p>
         <p className="mt-1">
           <span className="font-medium">Email:</span> {formData.email}
@@ -436,12 +517,35 @@ const RecruiterSignupForm = () => {
     </div>,
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formStep === formSteps.length - 1) {
-      // Handle form submission logic here
-      console.log("Form submitted:", formData);
-      // You would typically send this data to your server
+
+    try {
+      const response = await fetch(
+        "https://wehack-backend.vercel.app/api/signupRec",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+          },
+          body: JSON.stringify(addRecruiter()),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to add recruiter");
+      }
+
+      const data = await response.json();
+      console.log("Recruiter added successfully:", data);
+      window.location.href="/"
+
+      if (formStep === formSteps.length - 1) {
+        console.log("Form submitted:", addRecruiter());
+      }
+    } catch (error) {
+      console.error("Error adding recruiter:", error);
     }
   };
 
@@ -471,9 +575,7 @@ const RecruiterSignupForm = () => {
             <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               Skill-Hire
             </h2>
-            <p className="text-gray-400 mt-1 italic">
-              Recruit. Grow. Excel.
-            </p>
+            <p className="text-gray-400 mt-1 italic">Recruit. Grow. Excel.</p>
           </div>
 
           <div className="absolute -right-4 flex flex-col gap-2 z-0">
