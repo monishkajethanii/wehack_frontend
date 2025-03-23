@@ -8,13 +8,26 @@ export default function RecHistory() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        const storedEmail = localStorage.getItem("email");
-        if (storedEmail) {
-            setEmail(storedEmail);
-            fetchHistory(storedEmail);
-        } else {
-            setError("No email found in local storage");
-        }
+        const getEmailFromStorage = async () => {
+            try {
+                const stringifyData = await localStorage.getItem("loggedin");
+                if (stringifyData) {
+                    const rawData = JSON.parse(stringifyData);
+                    if (rawData?.email) {
+                        setEmail(rawData.email);
+                        fetchHistory(rawData.email);
+                    } else {
+                        setError("Email not found in local storage");
+                    }
+                } else {
+                    setError("No logged-in user data found");
+                }
+            } catch (err) {
+                setError("Error accessing local storage");
+            }
+        };
+
+        getEmailFromStorage();
     }, []);
 
     const fetchHistory = async (userEmail) => {
@@ -25,7 +38,7 @@ export default function RecHistory() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "auth": "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+                    "Authorization": "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
                 },
                 body: JSON.stringify({ email: userEmail }),
             });
@@ -48,11 +61,11 @@ export default function RecHistory() {
             {email ? (
                 <p className="mb-4 text-gray-400">Showing history for: <span className="font-bold">{email}</span></p>
             ) : (
-                <p className="text-red-500">No email found.</p>
+                <p className="text-red-500">{error}</p>
             )}
 
             {loading && <p className="mt-4">Loading...</p>}
-            {error && <p className="mt-4 text-red-500">{error}</p>}
+            {error && !loading && <p className="mt-4 text-red-500">{error}</p>}
 
             <div className="mt-6 w-full max-w-6xl overflow-x-auto">
                 {history.length > 0 ? (
