@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import {
   Search,
   User,
@@ -20,23 +20,104 @@ import {
   Menu,
   X as Close,
 } from "lucide-react";
+import axios from "axios";
 
 const StudentDashboard = () => {
   const [activeTab, setActiveTab] = useState("internships");
   const [notificationCount, setNotificationCount] = useState(3);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const [studentData, setStudent] = useState({ name: "Loading..." });
+  const [oppurtunity, setOppurtunity] = useState([]);
+  
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  const studentData = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    college: "University of Technology",
-    progress: 68,
-    completedProblems: 42,
-    streak: 7,
+  //check user loggedin status
+  useEffect(() => {
+    fetchUserInfo();
+    getOppurtunity();
+    const checkLoginStatus = async () => {
+      const stringifyData = await localStorage.getItem("loggedin");
+      const rawData = JSON.parse(stringifyData);
+
+      if (!rawData) {
+        return (window.location.href = "/");
+      }
+    };
+    checkLoginStatus();
+  }, []);
+
+  //fetch userData from localstorage
+  const fetchUserInfo = async () => {
+    const stringifyData = await localStorage.getItem("loggedin");
+    const rawData = JSON.parse(stringifyData);
+    
+    if (!rawData) {
+      setStudent({
+        name: "Dummy user.",
+        email: "dummy@gmail.com",
+        college: "Dummy College",
+      });
+      return;
+    }
+    
+    setStudent({
+      name: rawData.name,
+      email: rawData.email,
+      college: rawData.college_name,
+      student_id: rawData.student_id,
+      skills: rawData.skills,
+      resume: rawData.resume,
+      location: rawData.location,
+      grad_year: rawData.grad_year,
+      gender: rawData.gender,
+    });
+    
+    console.log(rawData);
+    console.log(studentData);
+  };
+
+  //lets fetch all data for dashboard
+  const getOppurtunity = async () => {
+    try {
+      const response = await axios.get(
+        "https://wehack-backend.vercel.app/api/getAllOpp",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+          },
+        }
+      );
+      
+      if (response.status === 200 && response.data && response.data.data) {
+        const formattedData = response.data.data.map((item) => ({
+          id: item.id || Math.random().toString(36).substr(2, 9),
+          company: item.company_name || "Unknown Company",
+          role: item.title || "Position",
+          desc: item.desc || "Description",
+          location: item.mode || "Remote",
+          duration: item.duration || "Not specified",
+          stipend: item.stipend || "Not specified",
+          deadline: item.deadline || "Not specified",
+          logo: item.logo || (item.company_name ? item.company_name[0] : "C"),
+          skills: item.major_skill || [],
+          status: item.status || "",
+        }));
+        
+        console.log("formattedData", formattedData);
+        setOppurtunity(formattedData);
+        console.log("setData ", oppurtunity);
+      } else {
+        console.log("No data received from API");
+        setOppurtunity([]);
+      }
+    } catch (error) {
+      console.log("Error", error.message);
+      setOppurtunity([]);
+      alert(error.message);
+    }
   };
 
   // Sample data for the dashboard
@@ -215,7 +296,7 @@ const StudentDashboard = () => {
           </ul>
         </nav>
 
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-gray-800" onClick={() => { localStorage.clear() }}>
           <a
             href="/"
             className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 text-gray-400"
@@ -284,75 +365,78 @@ const StudentDashboard = () => {
             <div className="space-y-4">
               <h2 className="text-xl font-bold">Recommended Internships</h2>
 
-              {internships.map((internship) => (
-                <div
-                  key={internship.id}
-                  className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition"
-                >
-                  <div className="flex flex-col md:flex-row md:items-start">
-                    <div className="h-12 w-12 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mb-3 md:mb-0 md:mr-4">
-                      <span className="text-white font-bold">
-                        {internship.logo}
-                      </span>
-                    </div>
-
-                    <div className="flex-1">
-                      <div className="flex flex-col sm:flex-row sm:justify-between">
-                        <h3 className="font-medium mb-1 sm:mb-0">
-                          {internship.role}
-                        </h3>
-                        {internship.status === "new" && (
-                          <span className="bg-blue-900 text-blue-300 px-2 py-0.5 rounded text-xs inline-block w-fit">
-                            New
-                          </span>
-                        )}
-                      </div>
-
-                      <p className="text-gray-400 text-sm">
-                        {internship.company}
-                      </p>
-
-                      <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-2 text-sm text-gray-400">
-                        <span className="flex items-center mb-1 sm:mb-0">
-                          <Building className="h-4 w-4 mr-1 flex-shrink-0" />
-                          <span className="truncate">
-                            {internship.location}
-                          </span>
-                        </span>
-                        <span className="flex items-center mb-1 sm:mb-0">
-                          <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
-                          {internship.duration}
-                        </span>
-                        <span className="flex items-center">
-                          <Clock className="h-4 w-4 mr-1 flex-shrink-0" />
-                          Deadline: {internship.deadline}
+              {oppurtunity && oppurtunity.length > 0 ? (
+                oppurtunity.map((internship) => (
+                  <div
+                    key={internship.id}
+                    className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition"
+                  >
+                    <div className="flex flex-col md:flex-row md:items-start">
+                      <div className="h-12 w-12 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mb-3 md:mb-0 md:mr-4">
+                        <span className="text-white font-bold">
+                          {internship.logo}
                         </span>
                       </div>
 
-                      <div className="mt-3 flex flex-col sm:flex-row sm:justify-between sm:items-center">
-                        <div className="flex flex-wrap gap-2 mb-2 sm:mb-0">
-                          {internship.skills.map((skill, index) => (
-                            <span
-                              key={index}
-                              className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs"
-                            >
-                              {skill}
+                      <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row sm:justify-between">
+                          <h3 className="font-medium mb-1 sm:mb-0">
+                            {internship.role}
+                          </h3>
+                          {internship.status === "new" && (
+                            <span className="bg-blue-900 text-blue-300 px-2 py-0.5 rounded text-xs inline-block w-fit">
+                              New
                             </span>
-                          ))}
+                          )}
                         </div>
 
-                        <span className="text-green-400 font-medium">
-                          {internship.stipend}
-                        </span>
-                      </div>
-                    </div>
+                        <p className="text-gray-400 text-sm">
+                          {internship.desc}
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          {internship.company}
+                        </p>
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-2 text-sm text-gray-400">
+                          <span className="flex items-center mb-1 sm:mb-0">
+                            <Building className="h-4 w-4 mr-1 flex-shrink-0" />
+                            <span className="truncate">
+                              {internship.location}
+                            </span>
+                          </span>
+                          {/* <span className="flex items-center mb-1 sm:mb-0">
+                          <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
+                            {internship.duration}
+                          </span> */}
+                          {/* <span className="flex items-center">
+                            <Clock className="h-4 w-4 mr-1 flex-shrink-0" />
+                            Deadline: {internship.deadline}
+                          </span> */}
+                        </div>
 
-                    <button className="ml-auto mt-3 md:mt-0 md:ml-4 text-blue-400 hover:text-blue-300">
-                      <ChevronRight className="h-5 w-5" />
-                    </button>
+                        <div className="mt-3 flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                          <div className="flex flex-wrap gap-2 mb-2 sm:mb-0">
+                          <span 
+                                 className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs"
+                                >
+                                  {internship.skills}
+                                </span>
+                          </div>
+
+                          {/* <span className="text-green-400 font-medium">
+                            {internship.stipend}
+                          </span> */}
+                        </div>
+                      </div>
+
+                      <button className="ml-auto mt-3 md:mt-0 md:ml-4 text-blue-400 hover:text-blue-300">
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-gray-400 text-center py-4">No internships available at the moment.</p>
+              )}
 
               <button className="w-full py-2 mt-4 rounded-md border border-gray-700 text-gray-400 hover:bg-gray-800 transition">
                 View All Internships
