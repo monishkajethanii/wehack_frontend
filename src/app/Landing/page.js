@@ -35,7 +35,6 @@ export default function Home() {
 function SplashScreen() {
   return (
     <div className="relative w-full h-screen flex items-center justify-center">
-      {/* Background animated particles */}
       <div className="absolute inset-0 overflow-hidden">
         {Array.from({ length: 30 }).map((_, i) => (
           <motion.div
@@ -57,8 +56,6 @@ function SplashScreen() {
           />
         ))}
       </div>
-
-      {/* Logo animation */}
       <motion.div
         className="flex flex-col items-center"
         initial={{ scale: 0.8, opacity: 0 }}
