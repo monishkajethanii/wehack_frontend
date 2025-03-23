@@ -66,18 +66,19 @@ const StudentDashboard = () => {
     setError("");
     try {
       const response = await fetch(
-        "https://wehack-backend.vercel.app/getUserHistory",
+        "https://wehack-backend.vercel.app/api/getUserHistory",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+            auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
           },
           body: JSON.stringify({ email: userEmail }),
         }
       );
 
       const result = await response.json();
+      console.log("history: ", result);
       if (response.ok) {
         setHistory(result.data);
       } else {
@@ -179,7 +180,8 @@ const StudentDashboard = () => {
             skills: item.major_skill || [],
             status: item.status || "",
             navRoute: navRoute, // Include the navigation route in the returned object
-            qbId: item.qb_id || null,
+            qbId: item.q_id || null,
+            question_type: item.question_type || "mcq",
           };
         });
 
@@ -386,6 +388,16 @@ const StudentDashboard = () => {
               >
                 Practice Problems
               </button>
+              <button
+                onClick={() => setActiveTab("history")}
+                className={`py-3 px-4 md:px-6 font-medium text-sm border-b-2 whitespace-nowrap ${
+                  activeTab === "history"
+                    ? "border-blue-500 text-blue-400"
+                    : "border-transparent text-gray-400 hover:text-gray-300"
+                }`}
+              >
+                History
+              </button>
             </div>
           </div>
 
@@ -398,6 +410,13 @@ const StudentDashboard = () => {
                   <div
                     key={internship.id}
                     className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition"
+                    onClick={() => {
+                      if (internship.question_type === "mcq") {
+                        window.location.href = "/mcq";
+                      } else {
+                        window.location.href = "/challenge?qbId=" + internship.qbId;
+                      }
+                    }}
                   >
                     <div className="flex flex-col md:flex-row md:items-start">
                       <div className="h-12 w-12 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mb-3 md:mb-0 md:mr-4">
@@ -431,14 +450,6 @@ const StudentDashboard = () => {
                               {internship.location}
                             </span>
                           </span>
-                          {/* <span className="flex items-center mb-1 sm:mb-0">
-                          <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
-                            {internship.duration}
-                          </span> */}
-                          {/* <span className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1 flex-shrink-0" />
-                            Deadline: {internship.deadline}
-                          </span> */}
                         </div>
 
                         <div className="mt-3 flex flex-col sm:flex-row sm:justify-between sm:items-center">
@@ -447,10 +458,6 @@ const StudentDashboard = () => {
                               {internship.skills}
                             </span>
                           </div>
-
-                          {/* <span className="text-green-400 font-medium">
-                            {internship.stipend}
-                          </span> */}
                         </div>
                       </div>
 
@@ -462,7 +469,7 @@ const StudentDashboard = () => {
                           }
                         }}
                       >
-                        {internship.mode === "mcq" ? (
+                        {internship.question_type === "mcq" ? (
                           <a href="/mcq">
                             <ChevronRight className="h-5 w-5" />
                           </a>
@@ -485,7 +492,7 @@ const StudentDashboard = () => {
                 View All Internships
               </button>
             </div>
-          ) : (
+          ) : activeTab === "practice" ? (
             <div className="space-y-4">
               <h2 className="text-xl font-bold">
                 Recommended Practice Problems
@@ -600,55 +607,86 @@ const StudentDashboard = () => {
                 View All Practice Problems
               </button>
             </div>
+          ) : (
+            // History Tab - Responsive Design
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold mb-4">User History</h2>
+              
+              {email ? (
+                <p className="mb-4 text-sm text-gray-400">
+                  Showing history for: <span className="font-semibold">{email}</span>
+                </p>
+              ) : (
+                <p className="text-red-500 text-sm">{error}</p>
+              )}
+              
+              {loading ? (
+                <p className="text-center py-4">Loading history...</p>
+              ) : (
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  {history.length > 0 ? (
+                    <div className="inline-block min-w-full align-middle">
+                      <div className="overflow-hidden border border-gray-700 rounded-lg">
+                        <table className="min-w-full divide-y divide-gray-700">
+                          <thead className="bg-gray-800">
+                            <tr>
+                              <th className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Title</th>
+                              <th className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <span className="hidden sm:inline">Company</span>
+                                <span className="sm:hidden">Co.</span>
+                              </th>
+                              <th className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <span className="hidden sm:inline">Status</span>
+                                <span className="sm:hidden">St.</span>
+                              </th>
+                              <th className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Mode</th>
+                              <th className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
+                              <th className="hidden sm:table-cell px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-gray-800 divide-y divide-gray-700">
+                            {history.map((item, index) => (
+                              <tr key={index} className="hover:bg-gray-750">
+                                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-300">
+                                  {item.title || "N/A"}
+                                </td>
+                                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-300">
+                                  {item.company_name || "N/A"}
+                                </td>
+                                <td className="px-3 py-3 whitespace-nowrap text-sm">
+                                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                    item.status === "completed" 
+                                      ? "bg-green-900 text-green-300" 
+                                      : item.status === "attempted"
+                                      ? "bg-yellow-900 text-yellow-300"
+                                      : "bg-gray-700 text-gray-300"
+                                  }`}>
+                                    {item.status || "N/A"}
+                                  </span>
+                                </td>
+                                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-300">
+                                  {item.mode || "N/A"}
+                                </td>
+                                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-300">
+                                  {item.qbId || "N/A"}
+                                </td>
+                                <td className="hidden sm:table-cell px-3 py-3 whitespace-nowrap text-sm text-gray-300">
+                                  {item.question_type || "N/A"}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 text-center py-6">No history found.</p>
+                  )}
+                </div>
+              )}
+            </div>
           )}
         </main>
-      </div>
-      <div className="bg-black text-white min-h-screen flex flex-col p-4">
-        {/* <h1 className="text-2xl font-bold mb-4">User History</h1> */}
-        {email ? (
-          <p className="mb-4 text-gray-400">
-            Showing history for: <span className="font-bold">{email}</span>
-          </p>
-        ) : (
-          <p className="text-red-500">{error}</p>
-        )}
-
-       
-
-        <div className="mt-6 w-full max-w-6xl overflow-x-auto">
-          {history.length > 0 ? (
-            <table className="w-full border border-white">
-              <thead>
-                <tr className="bg-gray-800">
-                  <th className="p-2 border border-white">Title</th>
-                  <th className="p-2 border border-white">Company Name</th>
-                  <th className="p-2 border border-white">Status</th>
-                  <th className="p-2 border border-white">Mode</th>
-                  <th className="p-2 border border-white">Q_ID</th>
-                  <th className="p-2 border border-white">Question Type</th>
-                </tr>
-              </thead>
-              <tbody>
-                {history.map((item, index) => (
-                  <tr key={index} className="border border-white text-center">
-                    <td className="p-2 border border-white">{item.title}</td>
-                    <td className="p-2 border border-white">
-                      {item.company_name}
-                    </td>
-                    <td className="p-2 border border-white">{item.status}</td>
-                    <td className="p-2 border border-white">{item.mode}</td>
-                    <td className="p-2 border border-white">{item.q_id}</td>
-                    <td className="p-2 border border-white">
-                      {item.question_type}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p className="text-gray-400">No history found.</p>
-          )}
-        </div>
       </div>
     </div>
   );

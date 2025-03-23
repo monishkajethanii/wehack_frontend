@@ -83,8 +83,10 @@ const CodeEditorPage = () => {
   useEffect(() => {
     const fetchQuestionById = async () => {
       try {
-        const questionId = 7; 
-        
+        const urlParams = new URLSearchParams(window.location.search);
+        const qId = urlParams.get('qbId');
+        const questionId = parseInt(qId); 
+        console.log("questionId: ",questionId)
         const response = await fetch('/questions.json');
         if (!response.ok) {
           throw new Error('Failed to fetch questions');
