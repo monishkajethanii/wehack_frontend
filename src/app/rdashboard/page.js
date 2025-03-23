@@ -20,7 +20,9 @@ import {
   Loader,
 } from "lucide-react";
 
+
 const RecruiterDashboard = () => {
+
   const [activeTab, setActiveTab] = useState("internships");
   const [notificationCount, setNotificationCount] = useState(2);
   const [showAddInternshipForm, setShowAddInternshipForm] = useState(false);
@@ -319,7 +321,9 @@ const RecruiterDashboard = () => {
               <a
                 href="#"
                 className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800"
+                onClick={()=>window.location='/rhistory'}
               >
+
                 <History className="h-5 w-5 text-gray-400" />
                 <span>History</span>
               </a>
