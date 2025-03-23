@@ -201,21 +201,7 @@ const StudentDashboard = () => {
           </div>
         </div>
 
-        <nav className="flex-1 p-4">
-          <ul className="">
-            <li>
-              <a
-                href="#"
-                className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800"
-              >
-                <History className="h-5 w-5 text-gray-400" />
-                <span>History</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
-
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-gray-800 items-end justify-end">
           <a
             href="/"
             className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800 text-gray-400"

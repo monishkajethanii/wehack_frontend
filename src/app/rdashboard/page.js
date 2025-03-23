@@ -17,7 +17,7 @@ import {
   Menu,
   ChevronDown,
   RefreshCw,
-  Loader
+  Loader,
 } from "lucide-react";
 
 const RecruiterDashboard = () => {
@@ -186,22 +186,25 @@ const RecruiterDashboard = () => {
   const addOpportunity = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch("https://wehack-backend.vercel.app/api/addopp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "auth": "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=" 
-        },
-        body: JSON.stringify(formData)
-      });
-  
+      const response = await fetch(
+        "https://wehack-backend.vercel.app/api/addopp",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
       if (!response.ok) {
         throw new Error("Failed to add opportunity");
       }
-  
+
       const data = await response.json();
       console.log("Opportunity added successfully:", data);
-      
+
       setFormData({
         title: "",
         desc: "",
@@ -213,9 +216,8 @@ const RecruiterDashboard = () => {
         question_type: "mcq",
         q_id: null,
       });
-      
+
       setShowAddInternshipForm(false);
-      
     } catch (error) {
       console.error("Error adding opportunity:", error);
     } finally {
@@ -226,15 +228,14 @@ const RecruiterDashboard = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     addOpportunity();
-  }
+  };
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-
   if (isLoading) {
-    return <Loader/>
+    return <Loader />;
   }
 
   return (
