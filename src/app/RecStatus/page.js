@@ -7,6 +7,7 @@ export default function RecruitmentStatus() {
   const [status, setStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userEmail, setUserEmail] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     // Get email from localStorage
@@ -16,9 +17,19 @@ export default function RecruitmentStatus() {
     // Fetch status from API
     const fetchStatus = async () => {
       try {
-        const response = await fetch('/api/getRecStatus');
-        const data = await response.json();
+        const response = await fetch('https://wehack-backend.vercel.app/api/getRecStatus', {
+          method: 'GET',
+          headers: {
+            'auth': 'ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=',
+            'Content-Type': 'application/json'
+          }
+        });
         
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+        
+        const data = await response.json();
         setStatus(data.status);
         
         // Redirect if status is 1
@@ -28,6 +39,7 @@ export default function RecruitmentStatus() {
         
       } catch (error) {
         console.error('Error fetching status:', error);
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -63,7 +75,7 @@ export default function RecruitmentStatus() {
       </header>
 
       <main className="flex-grow flex items-center justify-center px-4 py-12">
-        <StatusCard status={status} email={userEmail} />
+        {error ? <ErrorCard error={error} /> : <StatusCard status={status} email={userEmail} />}
       </main>
 
       <footer className="py-6 px-4 border-t border-gray-800 text-center text-gray-400">
@@ -81,6 +93,73 @@ function LoadingScreen() {
       <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin mb-8"></div>
       <h2 className="text-2xl font-semibold">Checking your application status...</h2>
     </div>
+  );
+}
+
+function ErrorCard({ error }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full max-w-lg"
+    >
+      <div className="bg-gradient-to-br from-orange-600 to-red-600 rounded-lg shadow-xl overflow-hidden">
+        <div className="p-8 md:p-12">
+          <div className="flex flex-col items-center text-center text-white">
+            <motion.div 
+              initial={{ scale: 0.8 }} 
+              animate={{ scale: 1 }} 
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="mb-6"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-24 w-24 text-orange-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </motion.div>
+            
+            <motion.h2 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="text-3xl md:text-4xl font-bold mb-4"
+            >
+              Connection Error
+            </motion.h2>
+            
+            <motion.p 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="text-white text-opacity-90 mb-8"
+            >
+              We couldn't connect to the status server. Please check your internet connection and try again.
+            </motion.p>
+            
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="bg-white bg-opacity-10 p-4 rounded-lg mb-8 w-full"
+            >
+              <p className="text-white text-opacity-80 text-sm">
+                Error details: {error}
+              </p>
+            </motion.div>
+            
+            <motion.button
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="px-8 py-3 bg-white text-gray-900 font-medium rounded-full hover:bg-opacity-90 transition-all shadow-lg"
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </motion.button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -159,7 +238,7 @@ function StatusCard({ status, email }) {
               {message}
             </motion.p>
             
-            {status === 2 && email && (
+            {status === 2 && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -173,9 +252,11 @@ function StatusCard({ status, email }) {
                   </svg>
                   <span className="font-mono text-white">support@skillhire.com</span>
                 </div>
-                <p className="text-white text-opacity-80 mt-3 text-sm">
-                  Include your email ({email}) in your correspondence for faster assistance.
-                </p>
+                {email && (
+                  <p className="text-white text-opacity-80 mt-3 text-sm">
+                    Include your email ({email}) in your correspondence for faster assistance.
+                  </p>
+                )}
               </motion.div>
             )}
             
