@@ -1,6 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Mail, Lock, LogIn, AlertCircle, CandlestickChart, Link ,LoaderCircleIcon } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  LogIn,
+  AlertCircle,
+  CandlestickChart,
+  Link,
+  LoaderCircleIcon,
+} from "lucide-react";
 import axios from "axios";
 
 const StudentLoginPage = () => {
@@ -11,35 +19,33 @@ const StudentLoginPage = () => {
 
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [loading , setLoading ] = useState(false)
+  const [loading, setLoading] = useState(false);
 
+  //check user loggedin status
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const stringifyData = await localStorage.getItem("loggedin");
+      if (!stringifyData) {
+        console.log("No logged-in user found.");
+        return;
+      }
 
-    //check user loggedin status
-    useEffect(() => {
-      const checkLoginStatus = async () => {
-        const stringifyData = await localStorage.getItem("loggedin");
-        if (!stringifyData) {
-          console.log("No logged-in user found.");
-          return;
+      try {
+        const rawData = JSON.parse(stringifyData);
+        console.log("Raw data:", rawData);
+
+        if (rawData && rawData.student_id) {
+          window.location.href = "/dashboard";
+        } else if (rawData && rawData.id) {
+          window.location.href = "/rdashboard";
         }
-    
-        try {
-          const rawData = JSON.parse(stringifyData);
-          console.log("Raw data:", rawData);
-    
-          if (rawData && rawData.student_id) {
-            window.location.href = "/dashboard";
-          } else if (rawData && rawData.id) {
-            window.location.href = "/rdashboard";
-          }
-        } catch (error) {
-          console.error("Error parsing localStorage data:", error);
-        }
-      };
-    
-      checkLoginStatus();
-    }, []);
-    
+      } catch (error) {
+        console.error("Error parsing localStorage data:", error);
+      }
+    };
+
+    checkLoginStatus();
+  }, []);
 
   const validationPatterns = {
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
@@ -94,49 +100,52 @@ const StudentLoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true)
+    setLoading(true);
     if (checkFormValidity()) {
       // Handle login logic here
-      try{
+      try {
         console.log("Login attempted with:", formData);
         const response = await axios.post(
           "https://wehack-backend.vercel.app/api/login",
           formData,
           {
             headers: {
-              'Content-Type': 'application/json',
-              'auth': 'ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU='
-            }
+              "Content-Type": "application/json",
+              auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+            },
           }
         );
-        console.warn(response)
-        if(response.status === 200){
-          console.log("User info",response.data.role)
-          if(response.data.role === 1){
-            localStorage.setItem("loggedin",JSON.stringify(response.data.data[0]))
+        console.warn(response);
+        if (response.status === 200) {
+          console.log("User info", response.data.role);
+          if (response.data.role === 1) {
+            localStorage.setItem(
+              "loggedin",
+              JSON.stringify(response.data.data[0])
+            );
             // const info = localStorage.getItem("loggedin")
             // const raw = JSON.parse(info);
             // console.log("User complete local: ",raw.name)
-             window.location.href = "/dashboard"
-          }
-          else if(response.data.role === 2 ){
-            localStorage.setItem("loggedin",JSON.stringify(response.data.data[0]))
-            window.location.href = "/rdashboard"
+            window.location.href = "/dashboard";
+          } else if (response.data.role === 2) {
+            localStorage.setItem(
+              "loggedin",
+              JSON.stringify(response.data.data[0])
+            );
+            window.location.href = "/rdashboard";
           }
         }
-      }
-      catch(error){
+      } catch (error) {
         let newErrors = { ...errors };
         newErrors.server = "Login failed. Please check your credentials.";
-        setErrors(newErrors)
+        setErrors(newErrors);
         setTouched({
           email: true,
           pin: true,
-        })
-        console.log(errors)
-      }
-      finally{
-        setLoading(false)
+        });
+        console.log(errors);
+      } finally {
+        setLoading(false);
       }
       // You would typically send this data to your server for authentication
     } else {
@@ -145,7 +154,7 @@ const StudentLoginPage = () => {
         email: true,
         pin: true,
       });
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -235,15 +244,24 @@ const StudentLoginPage = () => {
             type="submit"
             className="flex w-full justify-center items-center rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-500 transition"
           >
+            <a href="/recstatus">
               <LogIn className="mr-2 h-4 w-4" />
-              {loading ? <LoaderCircleIcon className="-ms-1 animate-spin" size={16} aria-hidden="true" /> : "Log in"}
-
+              {loading ? (
+                <LoaderCircleIcon
+                  className="-ms-1 animate-spin"
+                  size={16}
+                  aria-hidden="true"
+                />
+              ) : (
+                "Log in"
+              )}
+            </a>
           </button>
-          {errors.server &&(
-              <p className="text-red-500 text-sm mt-1 flex items-center">
-                <AlertCircle className="h-3 w-3 mr-1" /> {errors.server}
-              </p>
-            )}
+          {errors.server && (
+            <p className="text-red-500 text-sm mt-1 flex items-center">
+              <AlertCircle className="h-3 w-3 mr-1" /> {errors.server}
+            </p>
+          )}
           <div className="text-center mt-4">
             <span className="text-gray-400 text-sm">
               Don't have an account?{" "}
