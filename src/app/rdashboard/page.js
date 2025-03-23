@@ -20,9 +20,64 @@ import {
   Loader,
 } from "lucide-react";
 
-
 const RecruiterDashboard = () => {
+  const [email, setEmail] = useState("");
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
+  useEffect(() => {
+    const getEmailFromStorage = async () => {
+      try {
+        const stringifyData = await localStorage.getItem("loggedin");
+        if (stringifyData) {
+          const rawData = JSON.parse(stringifyData);
+          if (rawData?.email) {
+            setEmail(rawData.email);
+            fetchHistory(rawData.email);
+          } else {
+            setError("Email not found in local storage");
+          }
+        } else {
+          setError("No logged-in user data found");
+        }
+      } catch (err) {
+        setError("Error accessing local storage");
+      }
+    };
+
+    getEmailFromStorage();
+  }, []);
+
+  const fetchHistory = async (userEmail) => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch(
+        "https://wehack-backend.vercel.app/getRecHistory",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+          },
+          body: JSON.stringify({ email: userEmail }),
+        }
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        setHistory(result.data);
+      } else {
+        setError(result.error || "Failed to fetch recruiter history");
+      }
+    } catch (err) {
+      setError("Something went wrong");
+    }
+    setLoading(false);
+  };
+  
+  const [internships, setInternships] = useState([]);
   const [activeTab, setActiveTab] = useState("internships");
   const [notificationCount, setNotificationCount] = useState(2);
   const [showAddInternshipForm, setShowAddInternshipForm] = useState(false);
@@ -120,49 +175,6 @@ const RecruiterDashboard = () => {
     company: "TechCorp",
     email: "jane.smith@techcorp.com",
   };
-
-  const internships = [
-    {
-      id: 1,
-      title: "Frontend Developer Intern",
-      desc: "Looking for a skilled frontend developer to join our team for a 3-month internship.",
-      major_skill: "React",
-      limit: 5,
-      gender: "any",
-      mode: "Remote",
-      status: "1",
-      applicants: 12,
-      postedDate: "March 15, 2025",
-      question_type: "mcq",
-    },
-    {
-      id: 2,
-      title: "Backend Developer Intern",
-      desc: "Work on our server-side applications using Node.js and MongoDB.",
-      major_skill: "Node.js",
-      limit: 3,
-      gender: "any",
-      mode: "On-site",
-      status: "1",
-      applicants: 8,
-      postedDate: "March 10, 2025",
-      question_type: "code challenge",
-    },
-    {
-      id: 3,
-      title: "UI/UX Design Intern",
-      desc: "Help design user interfaces for our web and mobile applications.",
-      major_skill: "Figma",
-      limit: 2,
-      gender: "any",
-      mode: "Hybrid",
-      status: "0",
-      applicants: 0,
-      postedDate: "March 18, 2025",
-      question_type: "mcq",
-    },
-  ];
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -194,7 +206,7 @@ const RecruiterDashboard = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+            "auth": "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
           },
           body: JSON.stringify(formData),
         }
@@ -239,6 +251,40 @@ const RecruiterDashboard = () => {
   if (isLoading) {
     return <Loader />;
   }
+
+  useEffect(() => {
+    fetchInternships();
+  }, []);
+
+  const fetchInternships = async () => {
+    try {
+      setLoadingInternships(true);
+      const email = localStorage.getItem("email") || "";
+
+      const response = await fetch(
+        "https://wehack-backend.vercel.app/api/getRecHistory",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "auth": "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch internship history");
+      }
+
+      const data = await response.json();
+      setInternships(data);
+    } catch (error) {
+      console.error("Error fetching internship history:", error);
+    } finally {
+      setLoadingInternships(false);
+    }
+  };
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-black text-white overflow-hidden">
@@ -321,13 +367,97 @@ const RecruiterDashboard = () => {
               <a
                 href="#"
                 className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800"
-                onClick={()=>window.location='/rhistory'}
+                // onClick={() => (window.location = "/rhistory")}
               >
-
                 <History className="h-5 w-5 text-gray-400" />
                 <span>History</span>
               </a>
             </li>
+            <div className="bg-black text-white min-h-screen flex flex-col p-4">
+              {/* <h1 className="text-2xl font-bold mb-4">Recruiter History</h1> */}
+              {email ? (
+                <p className="mb-4 text-gray-400">
+                  Showing history for:{" "}
+                  <span className="font-bold">{email}</span>
+                </p>
+              ) : (
+                <p className="text-red-500">{error}</p>
+              )}
+
+              {loading && <p className="mt-4">Loading...</p>}
+
+              <div className="mt-6 w-full max-w-6xl overflow-x-auto">
+                {history.length > 0 ? (
+                  <table className="w-full border border-white">
+                    <thead>
+                      <tr className="bg-gray-800">
+                        <th className="p-2 border border-white">Title</th>
+                        <th className="p-2 border border-white">Description</th>
+                        <th className="p-2 border border-white">Major Skill</th>
+                        <th className="p-2 border border-white">Limit</th>
+                        <th className="p-2 border border-white">Gender</th>
+                        <th className="p-2 border border-white">Status</th>
+                        <th className="p-2 border border-white">Mode</th>
+                        <th className="p-2 border border-white">Q_ID</th>
+                        <th className="p-2 border border-white">
+                          Question Type
+                        </th>
+                        <th className="p-2 border border-white">
+                          Recruiter ID
+                        </th>
+                        <th className="p-2 border border-white">
+                          Company Name
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {history.map((item, index) => (
+                        <tr
+                          key={index}
+                          className="border border-white text-center"
+                        >
+                          <td className="p-2 border border-white">
+                            {item.title}
+                          </td>
+                          <td className="p-2 border border-white">
+                            {item.desc}
+                          </td>
+                          <td className="p-2 border border-white">
+                            {item.major_skill}
+                          </td>
+                          <td className="p-2 border border-white">
+                            {item.limit}
+                          </td>
+                          <td className="p-2 border border-white">
+                            {item.gender}
+                          </td>
+                          <td className="p-2 border border-white">
+                            {item.status}
+                          </td>
+                          <td className="p-2 border border-white">
+                            {item.mode}
+                          </td>
+                          <td className="p-2 border border-white">
+                            {item.q_id}
+                          </td>
+                          <td className="p-2 border border-white">
+                            {item.question_type}
+                          </td>
+                          <td className="p-2 border border-white">
+                            {item.recruiter_id}
+                          </td>
+                          <td className="p-2 border border-white">
+                            {item.company_name}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="mt-4 text-gray-400">No history found.</p>
+                )}
+              </div>
+            </div>
           </ul>
         </nav>
 

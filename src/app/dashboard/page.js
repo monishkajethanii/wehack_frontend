@@ -28,9 +28,65 @@ const StudentDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [studentData, setStudent] = useState({ name: "Loading..." });
   const [oppurtunity, setOppurtunity] = useState([]);
+  // for history
+  const [email, setEmail] = useState("");
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  useEffect(() => {
+    const getEmailFromStorage = async () => {
+      try {
+        const stringifyData = await localStorage.getItem("loggedin");
+        if (stringifyData) {
+          const rawData = JSON.parse(stringifyData);
+          if (rawData?.email) {
+            setEmail(rawData.email);
+            fetchHistory(rawData.email);
+          } else {
+            setError("Email not found in local storage");
+          }
+        } else {
+          setError("No logged-in user data found");
+        }
+      } catch (err) {
+        setError("Error accessing local storage");
+      }
+    };
+
+    getEmailFromStorage();
+  }, []);
+
+  const fetchHistory = async (userEmail) => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch(
+        "https://wehack-backend.vercel.app/getUserHistory",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+          },
+          body: JSON.stringify({ email: userEmail }),
+        }
+      );
+
+      const result = await response.json();
+      if (response.ok) {
+        setHistory(result.data);
+      } else {
+        setError(result.error || "Failed to fetch user history");
+      }
+    } catch (err) {
+      setError("Something went wrong");
+    }
+    setLoading(false);
   };
 
   //check user loggedin status
@@ -209,7 +265,7 @@ const StudentDashboard = () => {
 
         <div className="flex items-center">
           <h2 className="font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Skill-Hire
+            SkillHire
           </h2>
         </div>
 
@@ -262,20 +318,6 @@ const StudentDashboard = () => {
             </div>
           </div>
         </div>
-
-        <nav className="flex-1 p-4">
-          <ul className="">
-            <li>
-              <a
-                href="#"
-                className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800"
-              >
-                <History className="h-5 w-5 text-gray-400" />
-                <span>History</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
 
         <div
           className="p-4 border-t border-gray-800"
@@ -561,74 +603,51 @@ const StudentDashboard = () => {
           )}
         </main>
       </div>
+      <div className="bg-black text-white min-h-screen flex flex-col p-4">
+        {/* <h1 className="text-2xl font-bold mb-4">User History</h1> */}
+        {email ? (
+          <p className="mb-4 text-gray-400">
+            Showing history for: <span className="font-bold">{email}</span>
+          </p>
+        ) : (
+          <p className="text-red-500">{error}</p>
+        )}
 
-      {/* Activity Sidebar - Hidden on mobile, tablet */}
-      <div className="hidden lg:block w-72 bg-gray-900 border-l border-gray-800">
-        <div className="p-4 border-b border-gray-800">
-          <h2 className="font-bold text-lg">Activity History</h2>
-        </div>
+       
 
-        <div className="p-4">
-          <h3 className="text-sm font-medium text-gray-400 mb-3">
-            Recently Enrolled
-          </h3>
-
-          <div className="space-y-3">
-            {recentPractice.map((item) => (
-              <div key={item.id} className="flex items-start">
-                <div
-                  className={`h-8 w-8 rounded-full flex items-center justify-center mr-3 ${
-                    item.status === "Completed"
-                      ? "bg-green-900 text-green-300"
-                      : "bg-yellow-900 text-yellow-300"
-                  }`}
-                >
-                  {item.status === "Completed" ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Clock className="h-4 w-4" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm">{item.title}</p>
-                  <p className="text-xs text-gray-400">{item.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="block lg:hidden bg-gray-900 border-t border-gray-800 p-4">
-        <h2 className="font-bold text-lg mb-3">Activity History</h2>
-
-        <div className="flex overflow-x-auto space-x-4 pb-2">
-          {recentPractice.map((item) => (
-            <div
-              key={item.id}
-              className="flex-shrink-0 w-64 bg-gray-800 p-3 rounded-lg border border-gray-700"
-            >
-              <div className="flex items-start">
-                <div
-                  className={`h-8 w-8 rounded-full flex items-center justify-center mr-3 ${
-                    item.status === "Completed"
-                      ? "bg-green-900 text-green-300"
-                      : "bg-yellow-900 text-yellow-300"
-                  }`}
-                >
-                  {item.status === "Completed" ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Clock className="h-4 w-4" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm">{item.title}</p>
-                  <p className="text-xs text-gray-400">{item.time}</p>
-                </div>
-              </div>
-            </div>
-          ))}
+        <div className="mt-6 w-full max-w-6xl overflow-x-auto">
+          {history.length > 0 ? (
+            <table className="w-full border border-white">
+              <thead>
+                <tr className="bg-gray-800">
+                  <th className="p-2 border border-white">Title</th>
+                  <th className="p-2 border border-white">Company Name</th>
+                  <th className="p-2 border border-white">Status</th>
+                  <th className="p-2 border border-white">Mode</th>
+                  <th className="p-2 border border-white">Q_ID</th>
+                  <th className="p-2 border border-white">Question Type</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.map((item, index) => (
+                  <tr key={index} className="border border-white text-center">
+                    <td className="p-2 border border-white">{item.title}</td>
+                    <td className="p-2 border border-white">
+                      {item.company_name}
+                    </td>
+                    <td className="p-2 border border-white">{item.status}</td>
+                    <td className="p-2 border border-white">{item.mode}</td>
+                    <td className="p-2 border border-white">{item.q_id}</td>
+                    <td className="p-2 border border-white">
+                      {item.question_type}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-gray-400">No history found.</p>
+          )}
         </div>
       </div>
     </div>
