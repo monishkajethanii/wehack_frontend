@@ -1,13 +1,13 @@
-"use client";
 import { useState, useEffect } from "react";
 
-export default function RecHistory() {
+export default function UserHistory() {
     const [email, setEmail] = useState("");
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
     useEffect(() => {
+        // Fetch email from localStorage on mount
         const storedEmail = localStorage.getItem("email");
         if (storedEmail) {
             setEmail(storedEmail);
@@ -21,7 +21,7 @@ export default function RecHistory() {
         setLoading(true);
         setError("");
         try {
-            const response = await fetch("https://wehack-backend.vercel.app/getRecHistory", {
+            const response = await fetch("https://wehack-backend.vercel.app/getUserHistory", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -34,7 +34,7 @@ export default function RecHistory() {
             if (response.ok) {
                 setHistory(result.data);
             } else {
-                setError(result.error || "Failed to fetch recruiter history");
+                setError(result.error || "Failed to fetch history");
             }
         } catch (err) {
             setError("Something went wrong");
@@ -44,7 +44,7 @@ export default function RecHistory() {
 
     return (
         <div className="bg-black text-white min-h-screen flex flex-col items-center justify-center p-4">
-            <h1 className="text-2xl font-bold mb-4">Recruiter History</h1>
+            <h1 className="text-2xl font-bold mb-4">User History</h1>
             {email ? (
                 <p className="mb-4 text-gray-400">Showing history for: <span className="font-bold">{email}</span></p>
             ) : (
