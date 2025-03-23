@@ -6,8 +6,10 @@ import { motion } from "framer-motion";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     // Simulate loading time
     const timer = setTimeout(() => {
       setLoading(false);
@@ -26,27 +28,39 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {loading ? <SplashScreen /> : <MainContent />}
+      {loading ? <SplashScreen isMounted={isMounted} /> : <MainContent />}
     </div>
   );
 }
 
-function SplashScreen() {
+function SplashScreen({ isMounted }) {
+  // Safe default values when not mounted (server-side)
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 800 });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    }
+  }, []);
+
   return (
     <div className="relative w-full h-screen flex items-center justify-center">
       {/* Background animated particles */}
       <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 30 }).map((_, i) => (
+        {isMounted && Array.from({ length: 30 }).map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-2 h-2 bg-blue-500 rounded-full opacity-60"
             initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * dimensions.width,
+              y: Math.random() * dimensions.height,
             }}
             animate={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * dimensions.width,
+              y: Math.random() * dimensions.height,
             }}
             transition={{
               duration: 15 + Math.random() * 10,
