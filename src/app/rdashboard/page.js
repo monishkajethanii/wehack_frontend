@@ -54,7 +54,7 @@ const RecruiterDashboard = () => {
     setError("");
     try {
       const response = await fetch(
-        "https://wehack-backend.vercel.app/getRecHistory",
+        "https://wehack-backend.vercel.app/api/getRecHistory",
         {
           method: "POST",
           headers: {
@@ -76,9 +76,10 @@ const RecruiterDashboard = () => {
     }
     setLoading(false);
   };
-  
+
   const [internships, setInternships] = useState([]);
   const [activeTab, setActiveTab] = useState("internships");
+  const [userEmail, setUserEmail] = useState("");
   const [notificationCount, setNotificationCount] = useState(2);
   const [showAddInternshipForm, setShowAddInternshipForm] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -86,6 +87,7 @@ const RecruiterDashboard = () => {
   const [availableQuestions, setAvailableQuestions] = useState([]);
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingInternships, setLoadingInternships] = useState(true);
   const [formData, setFormData] = useState({
     title: "",
     desc: "",
@@ -206,7 +208,7 @@ const RecruiterDashboard = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "auth": "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+            auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
           },
           body: JSON.stringify(formData),
         }
@@ -259,7 +261,25 @@ const RecruiterDashboard = () => {
   const fetchInternships = async () => {
     try {
       setLoadingInternships(true);
-      const email = localStorage.getItem("email") || "";
+
+      // Get the email first
+      let email = "";
+      try {
+        const stringifyData = localStorage.getItem("loggedin");
+        if (stringifyData) {
+          const rawData = JSON.parse(stringifyData);
+          email = rawData.email || "";
+          setUserEmail(email);
+        }
+      } catch (e) {
+        console.error("Error retrieving email from localStorage:", e);
+      }
+
+      // Only proceed if we have an email
+      if (!email) {
+        console.error("No email found, can't fetch internships");
+        return;
+      }
 
       const response = await fetch(
         "https://wehack-backend.vercel.app/api/getRecHistory",
@@ -267,7 +287,7 @@ const RecruiterDashboard = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "auth": "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+            auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
           },
           body: JSON.stringify({ email }),
         }
@@ -278,9 +298,15 @@ const RecruiterDashboard = () => {
       }
 
       const data = await response.json();
-      setInternships(data);
+      if (data && data.data && Array.isArray(data.data)) {
+        setInternships(data.data);
+      } else {
+        console.error("Received invalid data format", data);
+        setInternships([]);
+      }
     } catch (error) {
       console.error("Error fetching internship history:", error);
+      setInternships([]);
     } finally {
       setLoadingInternships(false);
     }
@@ -1043,7 +1069,11 @@ const RecruiterDashboard = () => {
                   </table>
                 </div>
               </div>
-
+              {internships.length === 0 && (
+                <p className="text-gray-500 text-center">
+                  No Opportunities Created.
+                </p>
+              )}
               {/* Cards for mobile view */}
               <div className="md:hidden space-y-4">
                 {internships.map((internship) => (
