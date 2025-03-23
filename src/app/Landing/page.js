@@ -1,8 +1,8 @@
 // pages/index.js
 "use client";
-import { useEffect, useState } from 'react';
-import Head from 'next/head';
-import { motion } from 'framer-motion';
+import { useEffect, useState } from "react";
+import Head from "next/head";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -19,15 +19,14 @@ export default function Home() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-black text-white overflow-hidden">
       <Head>
         <title>SkillHire | Real Skills Assessment</title>
-        <meta name="description" content="Connecting recruiters with top talent based on real skills assessment" />
+        <meta
+          name="description"
+          content="Connecting recruiters with top talent based on real skills assessment"
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {loading ? (
-        <SplashScreen />
-      ) : (
-        <MainContent />
-      )}
+      {loading ? <SplashScreen /> : <MainContent />}
     </div>
   );
 }
@@ -73,23 +72,24 @@ function SplashScreen() {
         >
           Skill<span className="text-blue-500">Hire</span>
         </motion.h1>
-        
+
         <motion.div
           className="w-16 h-1 bg-blue-500 mb-6"
           initial={{ width: 0 }}
           animate={{ width: "4rem" }}
           transition={{ delay: 0.8, duration: 0.6 }}
         />
-        
+
         <motion.p
           className="text-lg md:text-xl text-gray-300 text-center max-w-md px-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.8 }}
         >
-          Assessing real skills to connect top talent with the right opportunities
+          Assessing real skills to connect top talent with the right
+          opportunities
         </motion.p>
-        
+
         <motion.div
           className="mt-8"
           initial={{ opacity: 0 }}
@@ -113,22 +113,35 @@ function MainContent() {
     >
       <header className="fixed top-0 left-0 right-0 z-50 py-6 px-4 md:px-12 flex justify-between items-center">
         <div className="flex items-center">
-          <h1 className="text-2xl font-bold">Skill<span className="text-blue-500">Hire</span></h1>
+          <h1 className="text-2xl font-bold">
+            Skill<span className="text-blue-500">Hire</span>
+          </h1>
         </div>
         <nav className="hidden md:block">
           <ul className="flex space-x-8">
-            <li className="hover:text-blue-400 transition-colors"><a href="#">Home</a></li>
-            <li className="hover:text-blue-400 transition-colors"><a href="#">For Recruiters</a></li>
-            <li className="hover:text-blue-400 transition-colors"><a href="#">For Students</a></li>
-            <li className="hover:text-blue-400 transition-colors"><a href="#">About</a></li>
+            <li className="hover:text-blue-400 transition-colors">
+              <a href="#">Home</a>
+            </li>
+            <li className="hover:text-blue-400 transition-colors">
+              <a href="#">For Recruiters</a>
+            </li>
+            <li className="hover:text-blue-400 transition-colors">
+              <a href="#">For Students</a>
+            </li>
+            {/* <li className="hover:text-blue-400 transition-colors"><a href="#">About</a></li> */}
           </ul>
         </nav>
         <div className="flex space-x-4">
-          <button className="px-4 py-2 border border-blue-500 rounded-md hover:bg-blue-500 hover:bg-opacity-20 transition-all">Log In</button>
-          <button className="hidden md:block px-4 py-2 bg-blue-500 rounded-md hover:bg-blue-600 transition-colors">Sign Up</button>
+          <button className="px-4 py-2 border border-blue-500 rounded-md hover:bg-blue-500 hover:bg-opacity-20 transition-all">
+            {" "}
+            <a href="/">Log In</a>
+          </button>
+          <button className="hidden md:block px-4 py-2 bg-blue-500 rounded-md hover:bg-blue-600 transition-colors">
+            <a href="/signup">Sign Up</a>
+          </button>
         </div>
       </header>
-      
+
       <main>
         {/* Hero section */}
         <section className="pt-32 pb-20 px-4 md:px-16 lg:px-32">
@@ -139,10 +152,14 @@ function MainContent() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-                Find talent based on <span className="text-blue-500">real skills</span>, not just resumes
+                Find talent based on{" "}
+                <span className="text-blue-500">real skills</span>, not just
+                resumes
               </h2>
               <p className="text-gray-300 text-lg mb-8">
-                SkillHire bridges the gap between recruiters seeking qualified candidates and students looking for opportunities that match their abilities.
+                SkillHire bridges the gap between recruiters seeking qualified
+                candidates and students looking for opportunities that match
+                their abilities.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
                 <button className="px-8 py-3 bg-blue-500 rounded-md hover:bg-blue-600 transition-colors text-lg font-medium">
@@ -153,7 +170,7 @@ function MainContent() {
                 </button>
               </div>
             </motion.div>
-            
+
             <motion.div
               className="relative"
               initial={{ opacity: 0, scale: 0.9 }}
@@ -171,15 +188,27 @@ function MainContent() {
                     </div>
                   </div>
                   <div className="space-y-4">
-                    {['React.js', 'Node.js', 'TypeScript', 'UI/UX Design', 'Problem Solving'].map((skill, index) => (
-                      <div key={index} className="flex items-center justify-between">
+                    {[
+                      "React.js",
+                      "Node.js",
+                      "TypeScript",
+                      "UI/UX Design",
+                      "Problem Solving",
+                    ].map((skill, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between"
+                      >
                         <span>{skill}</span>
                         <div className="w-40 h-2 bg-gray-700 rounded-full overflow-hidden">
                           <motion.div
                             className="h-full bg-blue-500"
                             initial={{ width: 0 }}
                             animate={{ width: `${70 + Math.random() * 30}%` }}
-                            transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
+                            transition={{
+                              duration: 1,
+                              delay: 0.5 + index * 0.1,
+                            }}
                           />
                         </div>
                       </div>
@@ -194,32 +223,40 @@ function MainContent() {
             </motion.div>
           </div>
         </section>
-        
+
         {/* Features section */}
         <section className="py-20 px-4 md:px-16 bg-gray-900 bg-opacity-30">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">How SkillHire Works</h2>
-              <p className="text-gray-300 max-w-2xl mx-auto">Our platform uses advanced assessment tools to evaluate real skills and connect the right talent with the right companies.</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                How SkillHire Works
+              </h2>
+              <p className="text-gray-300 max-w-2xl mx-auto">
+                Our platform uses advanced assessment tools to evaluate real
+                skills and connect the right talent with the right companies.
+              </p>
             </div>
-            
+
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 {
                   title: "For Recruiters",
-                  description: "Find candidates with verified skills that match your requirements, saving time on screening and interviews.",
-                  icon: "👔"
+                  description:
+                    "Find candidates with verified skills that match your requirements, saving time on screening and interviews.",
+                  icon: "👔",
                 },
                 {
                   title: "For Students",
-                  description: "Showcase your real abilities and get matched with opportunities that align with your skill set.",
-                  icon: "🎓"
+                  description:
+                    "Showcase your real abilities and get matched with opportunities that align with your skill set.",
+                  icon: "🎓",
                 },
                 {
                   title: "Skill Assessment",
-                  description: "Our comprehensive testing evaluates practical skills that matter in real-world scenarios.",
-                  icon: "📊"
-                }
+                  description:
+                    "Our comprehensive testing evaluates practical skills that matter in real-world scenarios.",
+                  icon: "📊",
+                },
               ].map((feature, index) => (
                 <motion.div
                   key={index}
@@ -230,7 +267,9 @@ function MainContent() {
                   viewport={{ once: true }}
                 >
                   <div className="text-4xl mb-4">{feature.icon}</div>
-                  <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                  <h3 className="text-xl font-semibold mb-3">
+                    {feature.title}
+                  </h3>
                   <p className="text-gray-300">{feature.description}</p>
                 </motion.div>
               ))}
@@ -238,17 +277,27 @@ function MainContent() {
           </div>
         </section>
       </main>
-      
+
       <footer className="py-8 px-4 border-t border-gray-800">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
           <div className="mb-6 md:mb-0">
-            <h2 className="text-xl font-bold">Skill<span className="text-blue-500">Hire</span></h2>
-            <p className="text-gray-400 mt-2">© 2025 SkillHire. All rights reserved.</p>
+            <h2 className="text-xl font-bold">
+              Skill<span className="text-blue-500">Hire</span>
+            </h2>
+            <p className="text-gray-400 mt-2">
+              © 2025 SkillHire. All rights reserved.
+            </p>
           </div>
           <div className="flex space-x-6">
-            <a href="#" className="text-gray-400 hover:text-white">Privacy</a>
-            <a href="#" className="text-gray-400 hover:text-white">Terms</a>
-            <a href="#" className="text-gray-400 hover:text-white">Contact</a>
+            <a href="#" className="text-gray-400 hover:text-white">
+              Privacy
+            </a>
+            <a href="#" className="text-gray-400 hover:text-white">
+              Terms
+            </a>
+            <a href="#" className="text-gray-400 hover:text-white">
+              Contact
+            </a>
           </div>
         </div>
       </footer>
