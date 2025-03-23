@@ -15,20 +15,31 @@ const StudentLoginPage = () => {
 
 
     //check user loggedin status
-    useEffect (() => {
+    useEffect(() => {
       const checkLoginStatus = async () => {
         const stringifyData = await localStorage.getItem("loggedin");
-        const rawData = JSON.parse(stringifyData);
-        console.log("raw data: ",rawData)
-        if(rawData.student_id){
-          window.location.href = "/dashboard"
+        if (!stringifyData) {
+          console.log("No logged-in user found.");
+          return;
         }
-        else if(rawData.id){
-          window.location.href = "/rdashboard"
+    
+        try {
+          const rawData = JSON.parse(stringifyData);
+          console.log("Raw data:", rawData);
+    
+          if (rawData && rawData.student_id) {
+            window.location.href = "/dashboard";
+          } else if (rawData && rawData.id) {
+            window.location.href = "/rdashboard";
+          }
+        } catch (error) {
+          console.error("Error parsing localStorage data:", error);
         }
       };
+    
       checkLoginStatus();
     }, []);
+    
 
   const validationPatterns = {
     email: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
