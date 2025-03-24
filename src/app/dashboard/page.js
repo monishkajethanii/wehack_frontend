@@ -71,7 +71,7 @@ const StudentDashboard = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+              "auth": "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
           },
           body: JSON.stringify({ email: userEmail }),
         }
@@ -413,8 +413,11 @@ const StudentDashboard = () => {
                     onClick={() => {
                       if (internship.question_type === "mcq") {
                         window.location.href = "/mcq";
-                      } else {
+                      } else if(internship.question_type === "code challenge"){
                         window.location.href = "/challenge?qbId=" + internship.qbId;
+                      }
+                      else{
+                        window.location.href = "/designchallenge"
                       }
                     }}
                   >
