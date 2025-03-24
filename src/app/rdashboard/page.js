@@ -59,7 +59,7 @@ const RecruiterDashboard = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+            auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
           },
           body: JSON.stringify({ email: userEmail }),
         }
