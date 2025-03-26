@@ -558,6 +558,7 @@ const StudentSignupForm = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+           'auth': 'ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU='
         },
         body: JSON.stringify(formattedData),
       })
