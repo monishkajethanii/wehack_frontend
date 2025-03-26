@@ -553,17 +553,18 @@ const StudentSignupForm = () => {
         password: formData.password,
       };
 
-      fetch("/signupUser", {
+      fetch("https://wehack-backend.vercel.app/api/signupUser", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          auth: "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
         },
         body: JSON.stringify(formattedData),
       })
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:", data);
+     
+          window.location.href = "/dashboard";
         })
         .catch((error) => {
           console.error("Error:", error);

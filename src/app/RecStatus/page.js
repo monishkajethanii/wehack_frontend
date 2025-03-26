@@ -10,15 +10,19 @@ export default function RecruitmentStatus() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Get email from localStorage
-    const email = localStorage.getItem('userEmail');
-    setUserEmail(email || '');
-
-    // Fetch status from API
+    try {
+      const stringifyData = localStorage.getItem("loggedin");
+      if (stringifyData) {
+        const rawData = JSON.parse(stringifyData);
+        setUserEmail(rawData.email || '');
+      }
+    } catch (e) {
+      console.error("Error retrieving email from localStorage:", e);
+    }
     const fetchStatus = async () => {
       try {
         const response = await fetch('https://wehack-backend.vercel.app/api/getRecStatus', {
-          method: 'GET',
+          method: 'POST',
           headers: {
             'auth': 'ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=',
             'Content-Type': 'application/json'
@@ -44,25 +48,21 @@ export default function RecruitmentStatus() {
         setLoading(false);
       }
     };
-
     fetchStatus();
   }, []);
 
   if (loading) {
     return <LoadingScreen />;
   }
-
   if (status === 1) {
-    // This will show briefly before redirect
     return null;
   }
-
   return (
     <div className="min-h-screen bg-gray-900 flex flex-col">
       <Head>
         <title>SkillHire | Application Status</title>
         <meta name="description" content="Check your SkillHire application status" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
 
       <header className="py-6 px-4 md:px-12 border-b border-gray-800">

@@ -143,7 +143,7 @@ function MainContent() {
           </ul>
         </nav>
         <div className="flex space-x-4">
-          <button className="px-4 py-2 border border-blue-500 rounded-md hover:bg-blue-500 hover:bg-opacity-20 transition-all">
+          <button className="px-4 py-2 border border-blue-500 rounded-md hover:bg-blue-500 hover:bg-opacity-20 transition-all"  onClick={() => window.location.href = '/Login'}>
             {" "}
             <a href="/">Log In</a>
           </button>
@@ -173,10 +173,10 @@ function MainContent() {
                 their abilities.
               </p>
               <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                <button className="px-8 py-3 bg-blue-500 rounded-md hover:bg-blue-600 transition-colors text-lg font-medium">
+                <button className="px-8 py-3 bg-blue-500 rounded-md hover:bg-blue-600 transition-colors text-lg font-medium" onClick={() => window.location.href = '/Login'}>
                   I'm a Recruiter
                 </button>
-                <button className="px-8 py-3 border border-white rounded-md hover:bg-white hover:bg-opacity-10 transition-all text-lg font-medium">
+                <button className="px-8 py-3 border border-white rounded-md hover:bg-white hover:bg-opacity-10 transition-all text-lg font-medium" onClick={() => window.location.href = '/Login'}>
                   I'm a Student
                 </button>
               </div>
