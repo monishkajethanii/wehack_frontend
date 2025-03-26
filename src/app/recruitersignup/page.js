@@ -539,7 +539,7 @@ const RecruiterSignupForm = () => {
 
       const data = await response.json();
       console.log("Recruiter added successfully:", data);
-      window.location.href="/"
+      window.location.href = "/recstatus";
 
       if (formStep === formSteps.length - 1) {
         console.log("Form submitted:", addRecruiter());
@@ -627,7 +627,7 @@ const RecruiterSignupForm = () => {
                 type="submit"
                 className="ml-auto rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-500 transition"
               >
-                Create Account
+                <a href="/recstatus">Create Account</a>
               </button>
             )}
           </div>

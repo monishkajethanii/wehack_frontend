@@ -32,6 +32,7 @@ const StudentSignupForm = () => {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [resumeFileName, setResumeFileName] = useState("");
+  const [message , setMessage ] = useState()
 
   const validationPatterns = {
     name: /^[a-zA-Z\s]{2,50}$/,
@@ -563,11 +564,20 @@ const StudentSignupForm = () => {
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:", data);
-     
-          window.location.href = "/dashboard";
+          let newErrors = { ...errors };
+          newErrors.server = ""+data.message;
+          setErrors(newErrors)
+          if(data.message !== "User already Exists!!"){
+
+            localStorage.setItem("loggedin",JSON.stringify(formattedData))
+            window.location.href = "/dashboard"
+          }
         })
         .catch((error) => {
           console.error("Error:", error);
+          let newErrors = { ...errors };
+          newErrors.server = ""+error.message;
+          setErrors(newErrors)
         });
 
       console.log("Form submitted with formatted data:", formattedData);
@@ -664,6 +674,14 @@ const StudentSignupForm = () => {
             )}
           </div>
         </form>
+        {
+          errors.server ? 
+          <p className="text-red-500 text-sm mt-1 flex items-center">
+          <AlertCircle className="h-3 w-3 mr-1" /> {errors.server}
+        </p>
+        : <></>
+        }
+
       </div>
     </div>
   );

@@ -38,10 +38,10 @@ function SplashScreen({ isMounted }) {
   const [dimensions, setDimensions] = useState({ width: 1000, height: 800 });
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       setDimensions({
         width: window.innerWidth,
-        height: window.innerHeight
+        height: window.innerHeight,
       });
     }
   }, []);
@@ -49,25 +49,26 @@ function SplashScreen({ isMounted }) {
   return (
     <div className="relative w-full h-screen flex items-center justify-center">
       <div className="absolute inset-0 overflow-hidden">
-        {isMounted && Array.from({ length: 30 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 bg-blue-500 rounded-full opacity-60"
-            initial={{
-              x: Math.random() * dimensions.width,
-              y: Math.random() * dimensions.height,
-            }}
-            animate={{
-              x: Math.random() * dimensions.width,
-              y: Math.random() * dimensions.height,
-            }}
-            transition={{
-              duration: 15 + Math.random() * 10,
-              repeat: Infinity,
-              repeatType: "mirror",
-            }}
-          />
-        ))}
+        {isMounted &&
+          Array.from({ length: 30 }).map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-2 h-2 bg-blue-500 rounded-full opacity-60"
+              initial={{
+                x: Math.random() * dimensions.width,
+                y: Math.random() * dimensions.height,
+              }}
+              animate={{
+                x: Math.random() * dimensions.width,
+                y: Math.random() * dimensions.height,
+              }}
+              transition={{
+                duration: 15 + Math.random() * 10,
+                repeat: Infinity,
+                repeatType: "mirror",
+              }}
+            />
+          ))}
       </div>
       <motion.div
         className="flex flex-col items-center"
@@ -134,10 +135,10 @@ function MainContent() {
               <a href="#">Home</a>
             </li>
             <li className="hover:text-blue-400 transition-colors">
-              <a href="#">For Recruiters</a>
+              <a href="/">For Recruiters</a>
             </li>
             <li className="hover:text-blue-400 transition-colors">
-              <a href="#">For Students</a>
+              <a href="/">For Students</a>
             </li>
             {/* <li className="hover:text-blue-400 transition-colors"><a href="#">About</a></li> */}
           </ul>

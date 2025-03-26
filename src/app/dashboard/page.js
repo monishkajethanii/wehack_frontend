@@ -28,9 +28,66 @@ const StudentDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [studentData, setStudent] = useState({ name: "Loading..." });
   const [oppurtunity, setOppurtunity] = useState([]);
+  // for history
+  const [email, setEmail] = useState("");
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  useEffect(() => {
+    const getEmailFromStorage = async () => {
+      try {
+        const stringifyData = await localStorage.getItem("loggedin");
+        if (stringifyData) {
+          const rawData = JSON.parse(stringifyData);
+          if (rawData?.email) {
+            setEmail(rawData.email);
+            fetchHistory(rawData.email);
+          } else {
+            setError("Email not found in local storage");
+          }
+        } else {
+          setError("No logged-in user data found");
+        }
+      } catch (err) {
+        setError("Error accessing local storage");
+      }
+    };
+
+    getEmailFromStorage();
+  }, []);
+
+  const fetchHistory = async (userEmail) => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await fetch(
+        "https://wehack-backend.vercel.app/api/getUserHistory",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+              "auth": "ZjVGZPUtYW1hX2FuZHJvaWRfMjAyMzY0MjU=",
+          },
+          body: JSON.stringify({ email: userEmail }),
+        }
+      );
+
+      const result = await response.json();
+      console.log("history: ", result);
+      if (response.ok) {
+        setHistory(result.data);
+      } else {
+        setError(result.error || "Failed to fetch user history");
+      }
+    } catch (err) {
+      setError("Something went wrong");
+    }
+    setLoading(false);
   };
 
   //check user loggedin status
@@ -123,7 +180,8 @@ const StudentDashboard = () => {
             skills: item.major_skill || [],
             status: item.status || "",
             navRoute: navRoute, // Include the navigation route in the returned object
-            qbId: item.qb_id || null,
+            qbId: item.q_id || null,
+            question_type: item.question_type || "mcq",
           };
         });
 
@@ -209,7 +267,7 @@ const StudentDashboard = () => {
 
         <div className="flex items-center">
           <h2 className="font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Skill-Hire
+            SkillHire
           </h2>
         </div>
 
@@ -262,20 +320,6 @@ const StudentDashboard = () => {
             </div>
           </div>
         </div>
-
-        <nav className="flex-1 p-4">
-          <ul className="">
-            <li>
-              <a
-                href="#"
-                className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-800"
-              >
-                <History className="h-5 w-5 text-gray-400" />
-                <span>History</span>
-              </a>
-            </li>
-          </ul>
-        </nav>
 
         <div
           className="p-4 border-t border-gray-800"
@@ -344,6 +388,16 @@ const StudentDashboard = () => {
               >
                 Practice Problems
               </button>
+              <button
+                onClick={() => setActiveTab("history")}
+                className={`py-3 px-4 md:px-6 font-medium text-sm border-b-2 whitespace-nowrap ${
+                  activeTab === "history"
+                    ? "border-blue-500 text-blue-400"
+                    : "border-transparent text-gray-400 hover:text-gray-300"
+                }`}
+              >
+                History
+              </button>
             </div>
           </div>
 
@@ -356,6 +410,16 @@ const StudentDashboard = () => {
                   <div
                     key={internship.id}
                     className="bg-gray-800 rounded-lg p-4 border border-gray-700 hover:border-gray-600 transition"
+                    onClick={() => {
+                      if (internship.question_type === "mcq") {
+                        window.location.href = "/mcq";
+                      } else if(internship.question_type === "code challenge"){
+                        window.location.href = "/challenge?qbId=" + internship.qbId;
+                      }
+                      else{
+                        window.location.href = "/designchallenge"
+                      }
+                    }}
                   >
                     <div className="flex flex-col md:flex-row md:items-start">
                       <div className="h-12 w-12 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mb-3 md:mb-0 md:mr-4">
@@ -389,14 +453,6 @@ const StudentDashboard = () => {
                               {internship.location}
                             </span>
                           </span>
-                          {/* <span className="flex items-center mb-1 sm:mb-0">
-                          <Calendar className="h-4 w-4 mr-1 flex-shrink-0" />
-                            {internship.duration}
-                          </span> */}
-                          {/* <span className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1 flex-shrink-0" />
-                            Deadline: {internship.deadline}
-                          </span> */}
                         </div>
 
                         <div className="mt-3 flex flex-col sm:flex-row sm:justify-between sm:items-center">
@@ -405,10 +461,6 @@ const StudentDashboard = () => {
                               {internship.skills}
                             </span>
                           </div>
-
-                          {/* <span className="text-green-400 font-medium">
-                            {internship.stipend}
-                          </span> */}
                         </div>
                       </div>
 
@@ -420,7 +472,7 @@ const StudentDashboard = () => {
                           }
                         }}
                       >
-                        {internship.mode === "mcq" ? (
+                        {internship.question_type === "mcq" ? (
                           <a href="/mcq">
                             <ChevronRight className="h-5 w-5" />
                           </a>
@@ -443,7 +495,7 @@ const StudentDashboard = () => {
                 View All Internships
               </button>
             </div>
-          ) : (
+          ) : activeTab === "practice" ? (
             <div className="space-y-4">
               <h2 className="text-xl font-bold">
                 Recommended Practice Problems
@@ -558,78 +610,86 @@ const StudentDashboard = () => {
                 View All Practice Problems
               </button>
             </div>
+          ) : (
+            // History Tab - Responsive Design
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold mb-4">User History</h2>
+              
+              {email ? (
+                <p className="mb-4 text-sm text-gray-400">
+                  Showing history for: <span className="font-semibold">{email}</span>
+                </p>
+              ) : (
+                <p className="text-red-500 text-sm">{error}</p>
+              )}
+              
+              {loading ? (
+                <p className="text-center py-4">Loading history...</p>
+              ) : (
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                  {history.length > 0 ? (
+                    <div className="inline-block min-w-full align-middle">
+                      <div className="overflow-hidden border border-gray-700 rounded-lg">
+                        <table className="min-w-full divide-y divide-gray-700">
+                          <thead className="bg-gray-800">
+                            <tr>
+                              <th className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Title</th>
+                              <th className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <span className="hidden sm:inline">Company</span>
+                                <span className="sm:hidden">Co.</span>
+                              </th>
+                              <th className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                <span className="hidden sm:inline">Status</span>
+                                <span className="sm:hidden">St.</span>
+                              </th>
+                              <th className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Mode</th>
+                              <th className="px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">ID</th>
+                              <th className="hidden sm:table-cell px-3 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-gray-800 divide-y divide-gray-700">
+                            {history.map((item, index) => (
+                              <tr key={index} className="hover:bg-gray-750">
+                                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-300">
+                                  {item.title || "N/A"}
+                                </td>
+                                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-300">
+                                  {item.company_name || "N/A"}
+                                </td>
+                                <td className="px-3 py-3 whitespace-nowrap text-sm">
+                                  <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                    item.status === "completed" 
+                                      ? "bg-green-900 text-green-300" 
+                                      : item.status === "attempted"
+                                      ? "bg-yellow-900 text-yellow-300"
+                                      : "bg-gray-700 text-gray-300"
+                                  }`}>
+                                    {item.status || "N/A"}
+                                  </span>
+                                </td>
+                                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-300">
+                                  {item.mode || "N/A"}
+                                </td>
+                                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-300">
+                                  {item.qbId || "N/A"}
+                                </td>
+                                <td className="hidden sm:table-cell px-3 py-3 whitespace-nowrap text-sm text-gray-300">
+                                  {item.question_type || "N/A"}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 text-center py-6">No history found.</p>
+                  )}
+                </div>
+              )}
+            </div>
           )}
         </main>
-      </div>
-
-      {/* Activity Sidebar - Hidden on mobile, tablet */}
-      <div className="hidden lg:block w-72 bg-gray-900 border-l border-gray-800">
-        <div className="p-4 border-b border-gray-800">
-          <h2 className="font-bold text-lg">Activity History</h2>
-        </div>
-
-        <div className="p-4">
-          <h3 className="text-sm font-medium text-gray-400 mb-3">
-            Recently Enrolled
-          </h3>
-
-          <div className="space-y-3">
-            {recentPractice.map((item) => (
-              <div key={item.id} className="flex items-start">
-                <div
-                  className={`h-8 w-8 rounded-full flex items-center justify-center mr-3 ${
-                    item.status === "Completed"
-                      ? "bg-green-900 text-green-300"
-                      : "bg-yellow-900 text-yellow-300"
-                  }`}
-                >
-                  {item.status === "Completed" ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Clock className="h-4 w-4" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm">{item.title}</p>
-                  <p className="text-xs text-gray-400">{item.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="block lg:hidden bg-gray-900 border-t border-gray-800 p-4">
-        <h2 className="font-bold text-lg mb-3">Activity History</h2>
-
-        <div className="flex overflow-x-auto space-x-4 pb-2">
-          {recentPractice.map((item) => (
-            <div
-              key={item.id}
-              className="flex-shrink-0 w-64 bg-gray-800 p-3 rounded-lg border border-gray-700"
-            >
-              <div className="flex items-start">
-                <div
-                  className={`h-8 w-8 rounded-full flex items-center justify-center mr-3 ${
-                    item.status === "Completed"
-                      ? "bg-green-900 text-green-300"
-                      : "bg-yellow-900 text-yellow-300"
-                  }`}
-                >
-                  {item.status === "Completed" ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Clock className="h-4 w-4" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm">{item.title}</p>
-                  <p className="text-xs text-gray-400">{item.time}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
